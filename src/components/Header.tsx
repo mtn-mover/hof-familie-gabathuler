@@ -130,16 +130,6 @@ export default function Header() {
                 )}
               </Link>
             ))}
-            <Link
-              href="/contact"
-              className={`ml-2 px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                isScrolled
-                  ? 'bg-secondary-500 text-white hover:bg-secondary-600 hover:shadow-lg'
-                  : 'bg-white text-secondary-600 hover:bg-white/90 hover:shadow-lg'
-              }`}
-            >
-              Jetzt bestellen
-            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -218,19 +208,6 @@ export default function Header() {
                     </Link>
                   </motion.div>
                 ))}
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: navItems.length * 0.05 }}
-                  className="pt-2"
-                >
-                  <Link
-                    href="/contact"
-                    className="block w-full text-center px-4 py-3 bg-secondary-500 text-white font-medium rounded-full hover:bg-secondary-600 transition-colors duration-200"
-                  >
-                    Jetzt bestellen
-                  </Link>
-                </motion.div>
               </div>
             </div>
           </motion.div>
