@@ -306,14 +306,14 @@ export default function ContactPage() {
                     </svg>
                   </div>
                   <h3 className="font-serif text-lg font-semibold text-primary-800">
-                    Öffnungszeiten Hofladen
+                    Hofladen 24/7 geöffnet
                   </h3>
                 </div>
                 <p className="text-primary-700 font-medium mb-2">
-                  Nach telefonischer Vereinbarung
+                  Selbstbedienung rund um die Uhr
                 </p>
                 <p className="text-sm text-primary-600">
-                  Rufen Sie uns an, um einen Termin für die Abholung Ihrer Bestellung zu vereinbaren.
+                  Bezahlung bequem mit Twint. Bedienen Sie sich jederzeit selbst.
                 </p>
               </div>
             </motion.div>

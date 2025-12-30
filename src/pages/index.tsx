@@ -324,16 +324,12 @@ export default function Home() {
                     </h3>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between text-white/80">
-                        <span>Montag - Freitag</span>
-                        <span className="text-white font-medium">08:00 - 18:00</span>
+                        <span>Täglich</span>
+                        <span className="text-white font-medium">24/7 geöffnet</span>
                       </div>
-                      <div className="flex justify-between text-white/80">
-                        <span>Samstag</span>
-                        <span className="text-white font-medium">08:00 - 12:00</span>
-                      </div>
-                      <div className="flex justify-between text-white/80">
-                        <span>Sonntag</span>
-                        <span className="text-white/60">Geschlossen</span>
+                      <div className="text-white/80 mt-3 pt-3 border-t border-white/20">
+                        <p className="font-medium text-white">Selbstbedienung</p>
+                        <p className="mt-1">Bezahlung bequem mit Twint</p>
                       </div>
                     </div>
                   </div>
