@@ -55,7 +55,7 @@ export default function AboutPage() {
           src="/images/family/Familie Gabathuler.JPG"
           alt="Familie Gabathuler-Risch auf ihrem Hof"
           fill
-          className="object-cover"
+          className="object-cover object-top"
           priority
           quality={90}
           sizes="100vw"
