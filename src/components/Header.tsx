@@ -1,18 +1,28 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const navItems = [
   { href: '/', label: 'Home' },
-  { href: '/ueber-uns', label: 'Über uns' },
-  { href: '/produkte', label: 'Produkte' },
+  { href: '/about', label: 'Über uns' },
+  { href: '/products', label: 'Produkte' },
   { href: '/hofladen', label: 'Hofladen' },
-  { href: '/kontakt', label: 'Kontakt' },
+  { href: '/contact', label: 'Kontakt' },
 ]
 
 export default function Header() {
+  const router = useRouter()
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+  // Check if link is active
+  const isActive = (href: string) => {
+    if (href === '/') {
+      return router.pathname === '/'
+    }
+    return router.pathname.startsWith(href)
+  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,6 +44,11 @@ export default function Header() {
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [])
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setIsMobileMenuOpen(false)
+  }, [router.pathname])
 
   return (
     <header
@@ -93,17 +108,30 @@ export default function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 relative ${
                   isScrolled
-                    ? 'text-primary-700 hover:text-secondary-600 hover:bg-secondary-50'
-                    : 'text-white/90 hover:text-white hover:bg-white/10'
+                    ? isActive(item.href)
+                      ? 'text-secondary-600 bg-secondary-50'
+                      : 'text-primary-700 hover:text-secondary-600 hover:bg-secondary-50'
+                    : isActive(item.href)
+                      ? 'text-white bg-white/20'
+                      : 'text-white/90 hover:text-white hover:bg-white/10'
                 }`}
               >
                 {item.label}
+                {isActive(item.href) && (
+                  <motion.span
+                    layoutId="activeIndicator"
+                    className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full ${
+                      isScrolled ? 'bg-secondary-500' : 'bg-white'
+                    }`}
+                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  />
+                )}
               </Link>
             ))}
             <Link
-              href="/kontakt"
+              href="/contact"
               className={`ml-2 px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                 isScrolled
                   ? 'bg-secondary-500 text-white hover:bg-secondary-600 hover:shadow-lg'
@@ -175,10 +203,18 @@ export default function Header() {
                   >
                     <Link
                       href={item.href}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="block px-4 py-3 text-primary-700 font-medium rounded-lg hover:bg-secondary-50 hover:text-secondary-600 transition-colors duration-200"
+                      className={`block px-4 py-3 font-medium rounded-lg transition-colors duration-200 ${
+                        isActive(item.href)
+                          ? 'bg-secondary-50 text-secondary-600'
+                          : 'text-primary-700 hover:bg-secondary-50 hover:text-secondary-600'
+                      }`}
                     >
-                      {item.label}
+                      <span className="flex items-center justify-between">
+                        {item.label}
+                        {isActive(item.href) && (
+                          <span className="w-2 h-2 bg-secondary-500 rounded-full" />
+                        )}
+                      </span>
                     </Link>
                   </motion.div>
                 ))}
@@ -189,8 +225,7 @@ export default function Header() {
                   className="pt-2"
                 >
                   <Link
-                    href="/kontakt"
-                    onClick={() => setIsMobileMenuOpen(false)}
+                    href="/contact"
                     className="block w-full text-center px-4 py-3 bg-secondary-500 text-white font-medium rounded-full hover:bg-secondary-600 transition-colors duration-200"
                   >
                     Jetzt bestellen
