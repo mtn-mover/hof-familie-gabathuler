@@ -105,32 +105,11 @@ export default function Home() {
             </h1>
 
             {/* Subtitle */}
-            <p className="text-lg sm:text-xl md:text-2xl text-white/80 max-w-3xl mx-auto mb-10 leading-relaxed">
+            <p className="text-lg sm:text-xl md:text-2xl text-white/80 max-w-3xl mx-auto leading-relaxed">
               Frische Produkte aus der Mutterkuhhaltung
               <br className="hidden sm:block" />
               Direkt aus Fläsch, Graubünden
             </p>
-
-            {/* CTA Buttons */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.6 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center items-center"
-            >
-              <Link
-                href="/contact"
-                className="btn-primary bg-secondary-500 hover:bg-secondary-600 text-lg px-10 py-4"
-              >
-                Jetzt bestellen
-              </Link>
-              <Link
-                href="/about"
-                className="btn-secondary border-white/30 text-white hover:bg-white hover:text-primary-800 text-lg px-10 py-4"
-              >
-                Unsere Geschichte
-              </Link>
-            </motion.div>
           </motion.div>
 
           {/* Scroll Indicator */}
