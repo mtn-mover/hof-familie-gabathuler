@@ -14,21 +14,6 @@ const mischpaketContents = [
   { amount: '0.6 kg', item: 'Huft/Filet' },
 ]
 
-const products = [
-  { name: 'Siedfleisch', price: 21, description: 'Ideal für Suppen und Eintöpfe', image: '/images/products/Kalb.jpg' },
-  { name: 'Gehacktes', price: 21, description: 'Vielseitig verwendbar', image: '/images/farm/Kuh1.jpg' },
-  { name: 'Geschnetzeltes', price: 35, description: 'Zart und schnell zubereitet', image: '/images/products/Kalb im Stall.jpg' },
-  { name: 'Voressen', price: 25, description: 'Perfekt für Schmorgerichte', image: '/images/farm/Kuehe auf Feld.jpg' },
-  { name: 'Braten', price: 32, description: 'Für festliche Anlässe', image: '/images/farm/Kuh mit Kalb6.jpg' },
-  { name: 'Fleischvögel Plätzli', price: 32, description: 'Traditionelle Schweizer Spezialität', image: '/images/farm/Kuehe1.JPG' },
-  { name: 'Saftplätzli', price: 34, description: 'Saftig und aromatisch', image: '/images/farm/Kuh5.JPG' },
-  { name: 'Plätzli', price: 45, description: 'Kurz gebraten ein Genuss', image: '/images/farm/Kuehe auf Feld5.jpg' },
-  { name: 'Steak', price: 57, description: 'Premium-Qualität vom Grill', image: '/images/farm/Kuh auf feld.jpg' },
-  { name: 'Huft', price: 65, description: 'Besonders zart und mager', image: '/images/farm/Kuehe auf Feld7.jpg' },
-  { name: 'Filet', price: 75, description: 'Das edelste Stück', image: '/images/farm/Viele Kuehe.jpg' },
-  { name: 'Leber', price: 21, description: 'Reich an Nährstoffen', image: '/images/farm/Kuehe im Stall3.jpg' },
-]
-
 const deliveryDates = [
   { month: 'November', year: '2024', status: 'available' },
   { month: 'Dezember', year: '2024', status: 'available' },
@@ -177,67 +162,6 @@ export default function ProductsPage() {
               </div>
             </div>
           </motion.div>
-        </div>
-      </section>
-
-      {/* Einzelne Fleischstücke Section */}
-      <section className="section bg-primary-50">
-        <div className="container-custom">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-          >
-            <span className="inline-block text-secondary-600 font-medium text-sm tracking-wider uppercase mb-4">
-              Individuell
-            </span>
-            <h2 className="section-title">Einzelne Fleischstücke</h2>
-            <p className="section-subtitle mx-auto mt-4">
-              Wählen Sie genau das, was Sie brauchen
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {products.map((product, index) => (
-              <motion.div
-                key={product.name}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.05 }}
-                className="card group overflow-hidden"
-              >
-                {/* Product Image */}
-                <div className="relative h-48 -mx-6 -mt-6 mb-4 overflow-hidden">
-                  <Image
-                    src={product.image}
-                    alt={product.name}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-110"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                    quality={80}
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary-900/40 to-transparent" />
-                </div>
-
-                <h3 className="font-serif text-lg font-semibold text-primary-800 mb-1">
-                  {product.name}
-                </h3>
-                <p className="text-sm text-primary-500 mb-3">
-                  {product.description}
-                </p>
-                <div className="flex items-baseline gap-1">
-                  <span className="text-2xl font-bold text-secondary-600">
-                    CHF {product.price.toFixed(2)}
-                  </span>
-                  <span className="text-primary-500 text-sm">/kg</span>
-                </div>
-              </motion.div>
-            ))}
-          </div>
         </div>
       </section>
 
