@@ -1,0 +1,184 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base Styles */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply font-sans text-primary-800 bg-primary-50 antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif;
+  }
+}
+
+/* Component Styles */
+@layer components {
+  /* Primary Button - Green */
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-8 py-3
+           bg-secondary-500 text-white font-medium rounded-full
+           transition-all duration-300 ease-out
+           hover:bg-secondary-600 hover:shadow-lg hover:-translate-y-0.5
+           focus:outline-none focus:ring-2 focus:ring-secondary-500 focus:ring-offset-2
+           active:translate-y-0;
+  }
+
+  /* Secondary Button - Brown Outline */
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-8 py-3
+           bg-transparent text-primary-600 font-medium rounded-full
+           border-2 border-primary-500
+           transition-all duration-300 ease-out
+           hover:bg-primary-500 hover:text-white hover:shadow-lg hover:-translate-y-0.5
+           focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
+           active:translate-y-0;
+  }
+
+  /* Accent Button - Gold */
+  .btn-accent {
+    @apply inline-flex items-center justify-center px-8 py-3
+           bg-accent-500 text-white font-medium rounded-full
+           transition-all duration-300 ease-out
+           hover:bg-accent-600 hover:shadow-lg hover:-translate-y-0.5
+           focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2
+           active:translate-y-0;
+  }
+
+  /* Feature Card */
+  .card {
+    @apply bg-white rounded-xl shadow-md p-6
+           transition-all duration-300 ease-out
+           hover:shadow-xl hover:-translate-y-1;
+  }
+
+  .card-hover {
+    @apply relative overflow-hidden;
+  }
+
+  .card-hover::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-br from-secondary-500/5 to-accent-500/5
+           opacity-0 transition-opacity duration-300;
+  }
+
+  .card-hover:hover::before {
+    @apply opacity-100;
+  }
+
+  /* Section Styles */
+  .section {
+    @apply py-16 md:py-24;
+  }
+
+  .section-title {
+    @apply font-serif text-3xl md:text-4xl lg:text-5xl text-primary-800 mb-4;
+  }
+
+  .section-subtitle {
+    @apply text-lg md:text-xl text-primary-600 max-w-2xl;
+  }
+
+  /* Container */
+  .container-custom {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Link Styles */
+  .link-underline {
+    @apply relative inline-block text-secondary-600 font-medium;
+  }
+
+  .link-underline::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-0 h-0.5 bg-secondary-500
+           transition-all duration-300;
+  }
+
+  .link-underline:hover::after {
+    @apply w-full;
+  }
+
+  /* Navigation Link */
+  .nav-link {
+    @apply relative px-3 py-2 text-primary-700 font-medium
+           transition-colors duration-200
+           hover:text-secondary-600;
+  }
+
+  .nav-link::after {
+    content: '';
+    @apply absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5
+           bg-secondary-500 transition-all duration-300;
+  }
+
+  .nav-link:hover::after,
+  .nav-link.active::after {
+    @apply w-3/4;
+  }
+}
+
+/* Utility Classes */
+@layer utilities {
+  /* Text gradient */
+  .text-gradient {
+    @apply bg-gradient-to-r from-secondary-500 to-accent-500 bg-clip-text text-transparent;
+  }
+
+  /* Background overlay */
+  .bg-overlay {
+    @apply relative;
+  }
+
+  .bg-overlay::before {
+    content: '';
+    @apply absolute inset-0 bg-primary-900/50;
+  }
+
+  /* Aspect ratios */
+  .aspect-hero {
+    aspect-ratio: 16/9;
+  }
+
+  /* Animation delays */
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+
+  .animation-delay-600 {
+    animation-delay: 600ms;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-primary-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-primary-400 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-primary-500;
+}
+
+/* Selection */
+::selection {
+  @apply bg-secondary-500/20 text-primary-900;
+}
