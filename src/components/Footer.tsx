@@ -2,10 +2,10 @@ import Link from 'next/link'
 
 const quickLinks = [
   { href: '/', label: 'Home' },
-  { href: '/ueber-uns', label: 'Über uns' },
-  { href: '/produkte', label: 'Produkte' },
+  { href: '/about', label: 'Über uns' },
+  { href: '/products', label: 'Produkte' },
   { href: '/hofladen', label: 'Hofladen' },
-  { href: '/kontakt', label: 'Kontakt' },
+  { href: '/contact', label: 'Kontakt' },
 ]
 
 export default function Footer() {
@@ -164,24 +164,19 @@ export default function Footer() {
           {/* Opening Hours */}
           <div>
             <h3 className="font-serif text-lg font-semibold text-white mb-4">
-              Öffnungszeiten Hofladen
+              Hofladen
             </h3>
-            <div className="space-y-2 text-sm">
+            <div className="space-y-3 text-sm">
               <div className="flex justify-between text-primary-300">
-                <span>Montag - Freitag</span>
-                <span className="text-white font-medium">08:00 - 18:00</span>
-              </div>
-              <div className="flex justify-between text-primary-300">
-                <span>Samstag</span>
-                <span className="text-white font-medium">08:00 - 12:00</span>
-              </div>
-              <div className="flex justify-between text-primary-300">
-                <span>Sonntag</span>
-                <span className="text-primary-400">Geschlossen</span>
+                <span>Täglich</span>
+                <span className="text-white font-medium">24/7 geöffnet</span>
               </div>
               <div className="pt-3 mt-3 border-t border-primary-700">
+                <p className="text-secondary-400 font-medium mb-1">
+                  Selbstbedienung
+                </p>
                 <p className="text-primary-400 text-xs">
-                  Oder nach telefonischer Vereinbarung
+                  Bezahlung bequem mit Twint
                 </p>
               </div>
             </div>
