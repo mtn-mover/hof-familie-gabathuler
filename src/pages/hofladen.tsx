@@ -52,6 +52,16 @@ const features = [
   },
 ]
 
+// Hofladen Gallery Images
+const hofladenImages = [
+  { src: '/images/hofladen/Hofladen von innen.jpg', alt: 'Hofladen Innenansicht' },
+  { src: '/images/hofladen/Hofladen Angebot1.jpg', alt: 'Frische Produkte im Angebot' },
+  { src: '/images/hofladen/Hofladen Angebot2.jpg', alt: 'Fleischwaren im Hofladen' },
+  { src: '/images/hofladen/Hofladen Angebot3.jpg', alt: 'Regionale Spezialitäten' },
+  { src: '/images/hofladen/Hofladen Eier.jpg', alt: 'Frische Eier vom Hof' },
+  { src: '/images/hofladen/Hofladen2.JPG', alt: 'Unser Hofladen von aussen' },
+]
+
 export default function HofladenPage() {
   return (
     <Layout
@@ -61,18 +71,18 @@ export default function HofladenPage() {
       {/* Hero Section */}
       <section className="relative min-h-[50vh] flex items-center justify-center overflow-hidden">
         {/* Background Image */}
-        <div className="absolute inset-0">
-          <Image
-            src="/images/hofladen/Hofladen.JPG"
-            alt="Hofladen Familie Gabathuler"
-            fill
-            className="object-cover"
-            priority
-          />
-        </div>
+        <Image
+          src="/images/hofladen/Hero.jpg"
+          alt="Hofladen Familie Gabathuler"
+          fill
+          className="object-cover"
+          priority
+          quality={90}
+          sizes="100vw"
+        />
 
         {/* Overlay */}
-        <div className="absolute inset-0 bg-primary-900/60" />
+        <div className="absolute inset-0 bg-primary-900/50" />
 
         {/* Content */}
         <div className="relative z-10 container-custom text-center px-4 py-32">
@@ -192,11 +202,58 @@ export default function HofladenPage() {
         </div>
       </section>
 
-      {/* Location Section */}
+      {/* Gallery Section */}
       <section className="section bg-primary-50">
         <div className="container-custom">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <span className="inline-block text-secondary-600 font-medium text-sm tracking-wider uppercase mb-4">
+              Impressionen
+            </span>
+            <h2 className="section-title">Einblicke in unseren Hofladen</h2>
+          </motion.div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {hofladenImages.map((image, index) => (
+              <motion.div
+                key={image.src}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className={`relative rounded-xl overflow-hidden group ${
+                  index === 0 ? 'md:col-span-2 md:row-span-2 aspect-square md:aspect-auto' : 'aspect-square'
+                }`}
+              >
+                <Image
+                  src={image.src}
+                  alt={image.alt}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                  sizes={index === 0 ? "(max-width: 768px) 50vw, 66vw" : "(max-width: 768px) 50vw, 33vw"}
+                  quality={85}
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-primary-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                  <p className="text-white text-sm font-medium">{image.alt}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Location Section */}
+      <section className="section bg-white">
+        <div className="container-custom">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Map Placeholder */}
+            {/* Map/Image */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -204,25 +261,28 @@ export default function HofladenPage() {
               transition={{ duration: 0.7 }}
               className="relative"
             >
-              <div className="aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-secondary-100 to-secondary-200 shadow-lg">
-                {/* Google Maps Placeholder - kann später durch iframe ersetzt werden */}
-                <div className="w-full h-full flex flex-col items-center justify-center p-8 text-center">
-                  <svg className="w-20 h-20 text-secondary-500 mb-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  <h4 className="font-serif text-2xl font-semibold text-secondary-700 mb-3">
+              <div className="aspect-square rounded-2xl overflow-hidden relative group">
+                <Image
+                  src="/images/Feld mit Bergen2.jpg"
+                  alt="Blick auf die Bündner Berge bei Fläsch"
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  quality={85}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-primary-900/60 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
+                  <h4 className="font-serif text-2xl font-semibold mb-2">
                     St. Luzi 15
                   </h4>
-                  <p className="text-secondary-600 mb-6">
-                    7306 Fläsch<br />
-                    Graubünden, Schweiz
+                  <p className="text-white/80">
+                    7306 Fläsch, Graubünden
                   </p>
                   <a
                     href="https://maps.google.com/?q=St.+Luzi+15,+7306+Fläsch"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-secondary-600 font-medium hover:text-secondary-700 transition-colors"
+                    className="inline-flex items-center gap-2 mt-4 text-secondary-400 hover:text-secondary-300 transition-colors"
                   >
                     In Google Maps öffnen
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -257,7 +317,7 @@ export default function HofladenPage() {
               </div>
 
               {/* Address Card */}
-              <div className="bg-white rounded-xl p-6 shadow-md mb-6">
+              <div className="bg-primary-50 rounded-xl p-6 mb-6">
                 <h4 className="font-serif text-lg font-semibold text-primary-800 mb-4">
                   Adresse
                 </h4>
@@ -278,7 +338,7 @@ export default function HofladenPage() {
       </section>
 
       {/* Features Section */}
-      <section className="section bg-white">
+      <section className="section bg-primary-50">
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -301,7 +361,7 @@ export default function HofladenPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-primary-50 rounded-xl p-6 text-center"
+                className="bg-white rounded-xl p-6 text-center shadow-md"
               >
                 <div className="w-12 h-12 bg-secondary-500 rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -320,53 +380,24 @@ export default function HofladenPage() {
         </div>
       </section>
 
-      {/* Gallery Section */}
-      <section className="section bg-primary-50">
-        <div className="container-custom">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-          >
-            <span className="inline-block text-secondary-600 font-medium text-sm tracking-wider uppercase mb-4">
-              Impressionen
-            </span>
-            <h2 className="section-title">Einblicke in unseren Hofladen</h2>
-          </motion.div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              '/images/hofladen/Hofladen von innen.jpg',
-              '/images/hofladen/Hofladen Angebot1.jpg',
-              '/images/hofladen/Hofladen Angebot2.jpg',
-              '/images/hofladen/Hofladen Eier.jpg',
-            ].map((src, index) => (
-              <motion.div
-                key={src}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="aspect-square rounded-xl overflow-hidden relative group"
-              >
-                <Image
-                  src={src}
-                  alt={`Hofladen Impression ${index + 1}`}
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-primary-900/0 group-hover:bg-primary-900/20 transition-colors duration-300" />
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* CTA Section */}
-      <section className="section bg-primary-800">
-        <div className="container-custom">
+      <section className="relative py-20 overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <Image
+            src="/images/hofladen/Hofladen.JPG"
+            alt="Hofladen von aussen"
+            fill
+            className="object-cover"
+            sizes="100vw"
+            quality={85}
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-primary-800/80" />
+        </div>
+
+        {/* Content */}
+        <div className="container-custom relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -377,7 +408,7 @@ export default function HofladenPage() {
             <h2 className="font-serif text-3xl md:text-4xl font-bold text-white mb-4">
               Wir freuen uns auf Ihren Besuch!
             </h2>
-            <p className="text-primary-300 max-w-2xl mx-auto mb-8">
+            <p className="text-primary-200 max-w-2xl mx-auto mb-8">
               Rufen Sie uns an und vereinbaren Sie einen Termin.
               Gerne zeigen wir Ihnen unseren Hof und beraten Sie persönlich.
             </p>

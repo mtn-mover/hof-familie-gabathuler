@@ -1,4 +1,5 @@
 import { useState, FormEvent } from 'react'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import Layout from '@/components/Layout'
 
@@ -41,12 +42,21 @@ export default function ContactPage() {
       description="Kontaktieren Sie Familie Gabathuler-Risch in Fläsch. Wir freuen uns auf Ihre Anfrage für frisches Rindfleisch aus Mutterkuhhaltung."
     >
       {/* Hero Section */}
-      <section className="relative min-h-[40vh] flex items-center justify-center overflow-hidden">
-        {/* Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-600 to-primary-800" />
+      <section className="relative min-h-[50vh] flex items-center justify-center overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <Image
+            src="/images/farm/Hero.jpg"
+            alt="Hof Gabathuler in Fläsch"
+            fill
+            className="object-cover"
+            priority
+            sizes="100vw"
+          />
+        </div>
 
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-primary-900/30" />
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-primary-900/70 via-primary-900/50 to-primary-900/70" />
 
         {/* Content */}
         <div className="relative z-10 container-custom text-center px-4 py-32">

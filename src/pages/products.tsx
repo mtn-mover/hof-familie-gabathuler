@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import Link from 'next/link'
 import Layout from '@/components/Layout'
 
@@ -14,18 +15,18 @@ const mischpaketContents = [
 ]
 
 const products = [
-  { name: 'Siedfleisch', price: 21, description: 'Ideal für Suppen und Eintöpfe' },
-  { name: 'Gehacktes', price: 21, description: 'Vielseitig verwendbar' },
-  { name: 'Geschnetzeltes', price: 35, description: 'Zart und schnell zubereitet' },
-  { name: 'Voressen', price: 25, description: 'Perfekt für Schmorgerichte' },
-  { name: 'Braten', price: 32, description: 'Für festliche Anlässe' },
-  { name: 'Fleischvögel Plätzli', price: 32, description: 'Traditionelle Schweizer Spezialität' },
-  { name: 'Saftplätzli', price: 34, description: 'Saftig und aromatisch' },
-  { name: 'Plätzli', price: 45, description: 'Kurz gebraten ein Genuss' },
-  { name: 'Steak', price: 57, description: 'Premium-Qualität vom Grill' },
-  { name: 'Huft', price: 65, description: 'Besonders zart und mager' },
-  { name: 'Filet', price: 75, description: 'Das edelste Stück' },
-  { name: 'Leber', price: 21, description: 'Reich an Nährstoffen' },
+  { name: 'Siedfleisch', price: 21, description: 'Ideal für Suppen und Eintöpfe', image: '/images/products/Kalb.jpg' },
+  { name: 'Gehacktes', price: 21, description: 'Vielseitig verwendbar', image: '/images/farm/Kuh1.jpg' },
+  { name: 'Geschnetzeltes', price: 35, description: 'Zart und schnell zubereitet', image: '/images/products/Kalb im Stall.jpg' },
+  { name: 'Voressen', price: 25, description: 'Perfekt für Schmorgerichte', image: '/images/farm/Kuehe auf Feld.jpg' },
+  { name: 'Braten', price: 32, description: 'Für festliche Anlässe', image: '/images/farm/Kuh mit Kalb6.jpg' },
+  { name: 'Fleischvögel Plätzli', price: 32, description: 'Traditionelle Schweizer Spezialität', image: '/images/farm/Kuehe1.JPG' },
+  { name: 'Saftplätzli', price: 34, description: 'Saftig und aromatisch', image: '/images/farm/Kuh5.JPG' },
+  { name: 'Plätzli', price: 45, description: 'Kurz gebraten ein Genuss', image: '/images/farm/Kuehe auf Feld5.jpg' },
+  { name: 'Steak', price: 57, description: 'Premium-Qualität vom Grill', image: '/images/farm/Kuh auf feld.jpg' },
+  { name: 'Huft', price: 65, description: 'Besonders zart und mager', image: '/images/farm/Kuehe auf Feld7.jpg' },
+  { name: 'Filet', price: 75, description: 'Das edelste Stück', image: '/images/farm/Viele Kuehe.jpg' },
+  { name: 'Leber', price: 21, description: 'Reich an Nährstoffen', image: '/images/farm/Kuehe im Stall3.jpg' },
 ]
 
 const deliveryDates = [
@@ -42,11 +43,19 @@ export default function ProductsPage() {
     >
       {/* Hero Section */}
       <section className="relative min-h-[50vh] flex items-center justify-center overflow-hidden">
-        {/* Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-secondary-600 to-secondary-800" />
+        {/* Background Image */}
+        <Image
+          src="/images/products/Hero.JPG"
+          alt="Frisches Rindfleisch aus Mutterkuhhaltung"
+          fill
+          className="object-cover"
+          priority
+          quality={90}
+          sizes="100vw"
+        />
 
         {/* Overlay */}
-        <div className="absolute inset-0 bg-primary-900/30" />
+        <div className="absolute inset-0 bg-primary-900/50" />
 
         {/* Content */}
         <div className="relative z-10 container-custom text-center px-4 py-32">
@@ -55,7 +64,7 @@ export default function ProductsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <span className="inline-block text-secondary-200 font-medium text-sm tracking-wider uppercase mb-4">
+            <span className="inline-block text-secondary-400 font-medium text-sm tracking-wider uppercase mb-4">
               Direkt vom Hof
             </span>
             <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6">
@@ -92,12 +101,25 @@ export default function ProductsPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="max-w-4xl mx-auto"
+            className="max-w-5xl mx-auto"
           >
             <div className="bg-gradient-to-br from-primary-50 to-primary-100 rounded-3xl overflow-hidden shadow-lg">
-              <div className="grid grid-cols-1 lg:grid-cols-2">
+              <div className="grid grid-cols-1 lg:grid-cols-5">
+                {/* Image Side */}
+                <div className="lg:col-span-2 relative h-64 lg:h-auto">
+                  <Image
+                    src="/images/farm/Kuh mit Kalb.jpg"
+                    alt="Kuh mit Kalb - Mutterkuhhaltung"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 1024px) 100vw, 40vw"
+                    quality={85}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-primary-50 via-transparent to-transparent" />
+                </div>
+
                 {/* Info Side */}
-                <div className="p-8 md:p-10">
+                <div className="lg:col-span-3 p-8 md:p-10">
                   <div className="inline-flex items-center gap-2 bg-secondary-500 text-white px-4 py-1.5 rounded-full text-sm font-medium mb-6">
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -120,7 +142,7 @@ export default function ProductsPage() {
                   </p>
 
                   {/* Package Sizes */}
-                  <div className="flex flex-wrap gap-3 mb-8">
+                  <div className="flex flex-wrap gap-3 mb-6">
                     <div className="bg-white rounded-lg px-4 py-2 shadow-sm">
                       <span className="font-semibold text-primary-800">10 kg</span>
                       <span className="text-primary-500 text-sm ml-1">CHF 290</span>
@@ -135,39 +157,22 @@ export default function ProductsPage() {
                     </div>
                   </div>
 
+                  {/* Contents */}
+                  <div className="bg-white rounded-xl p-4 mb-6">
+                    <h4 className="font-semibold text-primary-800 mb-3 text-sm">Zusammensetzung 10kg Paket:</h4>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      {mischpaketContents.map((item) => (
+                        <div key={item.item} className="flex justify-between">
+                          <span className="text-primary-600">{item.item}</span>
+                          <span className="font-medium text-primary-800">{item.amount}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
                   <Link href="/contact" className="btn-primary w-full sm:w-auto">
                     Jetzt bestellen
                   </Link>
-                </div>
-
-                {/* Contents Side */}
-                <div className="bg-white p-8 md:p-10">
-                  <h4 className="font-serif text-lg font-semibold text-primary-800 mb-4">
-                    Zusammensetzung 10kg Paket
-                  </h4>
-                  <ul className="space-y-3">
-                    {mischpaketContents.map((item, index) => (
-                      <motion.li
-                        key={item.item}
-                        initial={{ opacity: 0, x: 20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: index * 0.05 }}
-                        className="flex items-center justify-between py-2 border-b border-primary-100 last:border-0"
-                      >
-                        <span className="text-primary-700">{item.item}</span>
-                        <span className="font-medium text-primary-800 bg-primary-50 px-3 py-1 rounded-full text-sm">
-                          {item.amount}
-                        </span>
-                      </motion.li>
-                    ))}
-                  </ul>
-                  <div className="mt-6 pt-4 border-t border-primary-200">
-                    <div className="flex items-center justify-between">
-                      <span className="font-semibold text-primary-800">Total</span>
-                      <span className="font-bold text-secondary-600">10.0 kg</span>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -202,13 +207,20 @@ export default function ProductsPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.05 }}
-                className="card group"
+                className="card group overflow-hidden"
               >
-                {/* Placeholder Image */}
-                <div className="aspect-square bg-gradient-to-br from-primary-100 to-primary-200 rounded-xl mb-4 flex items-center justify-center group-hover:from-primary-150 group-hover:to-primary-250 transition-all">
-                  <svg className="w-16 h-16 text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
+                {/* Product Image */}
+                <div className="relative h-48 -mx-6 -mt-6 mb-4 overflow-hidden">
+                  <Image
+                    src={product.image}
+                    alt={product.name}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    quality={80}
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-primary-900/40 to-transparent" />
                 </div>
 
                 <h3 className="font-serif text-lg font-semibold text-primary-800 mb-1">
@@ -253,7 +265,7 @@ export default function ProductsPage() {
               transition={{ duration: 0.6 }}
               className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
             >
-              {deliveryDates.map((date, index) => (
+              {deliveryDates.map((date) => (
                 <div
                   key={`${date.month}-${date.year}`}
                   className={`rounded-xl p-6 text-center ${
@@ -312,8 +324,23 @@ export default function ProductsPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="section bg-secondary-600">
-        <div className="container-custom">
+      <section className="relative py-20 overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <Image
+            src="/images/farm/Kuehe auf Alp.jpg"
+            alt="Kühe auf der Alp"
+            fill
+            className="object-cover"
+            sizes="100vw"
+            quality={85}
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-secondary-600/90" />
+        </div>
+
+        {/* Content */}
+        <div className="container-custom relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}

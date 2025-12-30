@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import Link from 'next/link'
 import Layout from '@/components/Layout'
 import FeatureCard from '@/components/FeatureCard'
@@ -34,16 +35,29 @@ const features = [
     icon: <MutterkuhIcon />,
     title: 'Mutterkuhhaltung',
     description: 'Unsere Tiere leben in artgerechter Mutterkuhhaltung. Die Kälber wachsen bei ihren Müttern auf - natürlich und stressfrei.',
-    href: '/ueber-uns',
+    href: '/about',
     linkText: 'Mehr erfahren',
   },
   {
     icon: <QualitaetIcon />,
     title: 'Frische Qualität',
     description: 'Bio Suisse zertifiziert. Höchste Qualität durch traditionelle Landwirtschaft und nachhaltige Produktion.',
-    href: '/produkte',
+    href: '/products',
     linkText: 'Unsere Produkte',
   },
+]
+
+// Gallery images - die schönsten Bilder vom Hof
+const galleryImages = [
+  { src: '/images/farm/Kuehe auf Alp.jpg', alt: 'Kühe auf der Alp mit Bergpanorama' },
+  { src: '/images/farm/Kuh mit Kalb.jpg', alt: 'Kuh mit ihrem Kalb auf der Weide' },
+  { src: '/images/family/Familie Gabathuler.JPG', alt: 'Familie Gabathuler-Risch' },
+  { src: '/images/hofladen/Hofladen von innen.jpg', alt: 'Unser Hofladen von innen' },
+  { src: '/images/farm/Feld mit Berge im Hintergrund.jpg', alt: 'Feld mit Bündner Bergen im Hintergrund' },
+  { src: '/images/farm/Viele Kuehe.jpg', alt: 'Unsere Kuhherde auf der Weide' },
+  { src: '/images/Feld mit Sonnenuntergang.jpg', alt: 'Sonnenuntergang über den Feldern' },
+  { src: '/images/farm/Ernte.jpg', alt: 'Ernte auf dem Feld' },
+  { src: '/images/hofladen/Hofladen Angebot1.jpg', alt: 'Frische Produkte im Hofladen' },
 ]
 
 export default function Home() {
@@ -51,15 +65,16 @@ export default function Home() {
     <Layout>
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Background Gradient (Placeholder for image) */}
-        <div className="absolute inset-0 bg-hero-gradient" />
-
-        {/* Decorative Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          }} />
-        </div>
+        {/* Background Image */}
+        <Image
+          src="/images/hero/Hero.jpg"
+          alt="Hof Familie Gabathuler - Blick über die Felder in Fläsch"
+          fill
+          className="object-cover"
+          priority
+          quality={90}
+          sizes="100vw"
+        />
 
         {/* Overlay */}
         <div className="absolute inset-0 bg-primary-900/50" />
@@ -104,13 +119,13 @@ export default function Home() {
               className="flex flex-col sm:flex-row gap-4 justify-center items-center"
             >
               <Link
-                href="/kontakt"
+                href="/contact"
                 className="btn-primary bg-secondary-500 hover:bg-secondary-600 text-lg px-10 py-4"
               >
                 Jetzt bestellen
               </Link>
               <Link
-                href="/ueber-uns"
+                href="/about"
                 className="btn-secondary border-white/30 text-white hover:bg-white hover:text-primary-800 text-lg px-10 py-4"
               >
                 Unsere Geschichte
@@ -192,16 +207,15 @@ export default function Home() {
               transition={{ duration: 0.7 }}
               className="relative"
             >
-              <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-gradient-to-br from-primary-200 to-primary-300">
-                {/* Placeholder for family image */}
-                <div className="w-full h-full flex items-center justify-center">
-                  <div className="text-center text-primary-500">
-                    <svg className="w-20 h-20 mx-auto mb-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                    <p className="text-sm">Familie Gabathuler-Risch</p>
-                  </div>
-                </div>
+              <div className="aspect-[4/3] rounded-2xl overflow-hidden relative group">
+                <Image
+                  src="/images/family/Familie Gabathuler2.jpg"
+                  alt="Familie Gabathuler-Risch auf ihrem Hof in Fläsch"
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  quality={85}
+                />
               </div>
 
               {/* Decorative Element */}
@@ -232,7 +246,7 @@ export default function Home() {
               </div>
               <div className="mt-8">
                 <Link
-                  href="/ueber-uns"
+                  href="/about"
                   className="btn-secondary"
                 >
                   Unsere Geschichte entdecken
@@ -243,72 +257,144 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Gallery Section */}
+      <section className="section bg-primary-50">
+        <div className="container-custom">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <h2 className="section-title">Einblicke vom Hof</h2>
+            <p className="section-subtitle mx-auto">
+              Impressionen aus unserem Alltag auf dem Bauernhof
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {galleryImages.map((image, index) => (
+              <motion.div
+                key={image.src}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="relative h-80 rounded-xl overflow-hidden group"
+              >
+                <Image
+                  src={image.src}
+                  alt={image.alt}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  quality={85}
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-primary-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                  <p className="text-white text-sm font-medium">{image.alt}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Call to Action Section */}
-      <section className="section bg-primary-100">
+      <section className="section bg-white">
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="bg-white rounded-3xl p-8 md:p-12 lg:p-16 shadow-lg"
+            className="relative rounded-3xl overflow-hidden"
           >
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-              {/* Content */}
-              <div>
-                <h2 className="section-title mb-4">
-                  Besuchen Sie unseren Hofladen
-                </h2>
-                <p className="text-primary-600 leading-relaxed mb-6">
-                  Entdecken Sie unser vielfältiges Angebot an frischem Fleisch, hausgemachten Würsten und regionalen Spezialitäten. Wir freuen uns auf Ihren Besuch!
-                </p>
+            {/* Background Image */}
+            <div className="absolute inset-0">
+              <Image
+                src="/images/hofladen/Hero.jpg"
+                alt="Unser Hofladen in Fläsch"
+                fill
+                className="object-cover"
+                sizes="100vw"
+                quality={85}
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-primary-900/70" />
+            </div>
 
-                {/* Opening Hours */}
-                <div className="bg-primary-50 rounded-xl p-6 mb-6">
-                  <h3 className="font-serif text-lg font-semibold text-primary-800 mb-3">
-                    Öffnungszeiten
-                  </h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-primary-600">Montag - Freitag</span>
-                      <span className="text-primary-800 font-medium">08:00 - 18:00</span>
+            {/* Content */}
+            <div className="relative z-10 p-8 md:p-12 lg:p-16">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+                {/* Text Content */}
+                <div>
+                  <h2 className="font-serif text-3xl md:text-4xl font-bold text-white mb-4">
+                    Besuchen Sie unseren Hofladen
+                  </h2>
+                  <p className="text-white/80 leading-relaxed mb-6">
+                    Entdecken Sie unser vielfältiges Angebot an frischem Fleisch, hausgemachten Würsten und regionalen Spezialitäten. Wir freuen uns auf Ihren Besuch!
+                  </p>
+
+                  {/* Opening Hours */}
+                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 mb-6">
+                    <h3 className="font-serif text-lg font-semibold text-white mb-3">
+                      Öffnungszeiten
+                    </h3>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between text-white/80">
+                        <span>Montag - Freitag</span>
+                        <span className="text-white font-medium">08:00 - 18:00</span>
+                      </div>
+                      <div className="flex justify-between text-white/80">
+                        <span>Samstag</span>
+                        <span className="text-white font-medium">08:00 - 12:00</span>
+                      </div>
+                      <div className="flex justify-between text-white/80">
+                        <span>Sonntag</span>
+                        <span className="text-white/60">Geschlossen</span>
+                      </div>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-primary-600">Samstag</span>
-                      <span className="text-primary-800 font-medium">08:00 - 12:00</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-primary-600">Sonntag</span>
-                      <span className="text-primary-500">Geschlossen</span>
-                    </div>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <Link href="/contact" className="btn-primary bg-secondary-500 hover:bg-secondary-600">
+                      Kontakt aufnehmen
+                    </Link>
+                    <Link href="/hofladen" className="btn-secondary border-white/30 text-white hover:bg-white hover:text-primary-800">
+                      Mehr zum Hofladen
+                    </Link>
                   </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Link href="/kontakt" className="btn-primary">
-                    Kontakt aufnehmen
-                  </Link>
-                  <Link href="/hofladen" className="btn-secondary">
-                    Mehr zum Hofladen
-                  </Link>
-                </div>
-              </div>
-
-              {/* Map/Location Placeholder */}
-              <div className="relative">
-                <div className="aspect-square md:aspect-[4/3] rounded-2xl overflow-hidden bg-gradient-to-br from-secondary-100 to-secondary-200">
-                  <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center">
-                    <svg className="w-16 h-16 text-secondary-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                {/* Location Card */}
+                <div className="bg-white rounded-2xl p-6 shadow-xl">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="w-12 h-12 bg-secondary-100 rounded-xl flex items-center justify-center">
+                      <svg className="w-6 h-6 text-secondary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-serif text-lg font-semibold text-primary-800">Standort</h4>
+                      <p className="text-primary-600 text-sm">Fläsch, Graubünden</p>
+                    </div>
+                  </div>
+                  <address className="not-italic text-primary-600 mb-4">
+                    <p className="font-medium text-primary-800">Familie Gabathuler-Risch</p>
+                    <p>St. Luzi 15</p>
+                    <p>7306 Fläsch</p>
+                  </address>
+                  <div className="flex items-center gap-3 text-primary-600">
+                    <svg className="w-5 h-5 text-secondary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                     </svg>
-                    <h4 className="font-serif text-xl font-semibold text-secondary-700 mb-2">
-                      St. Luzi 15
-                    </h4>
-                    <p className="text-secondary-600">
-                      7306 Fläsch<br />
-                      Graubünden, Schweiz
-                    </p>
+                    <a href="tel:+41813022319" className="hover:text-secondary-600 transition-colors">
+                      081 302 23 19
+                    </a>
                   </div>
                 </div>
               </div>

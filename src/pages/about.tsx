@@ -3,12 +3,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import Layout from '@/components/Layout'
 
-const fadeInUp = {
-  initial: { opacity: 0, y: 30 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.6 }
-}
-
 const philosophyItems = [
   {
     title: 'Qualität vor Quantität',
@@ -56,11 +50,19 @@ export default function AboutPage() {
     >
       {/* Hero Section */}
       <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
-        {/* Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary-500 to-primary-700" />
+        {/* Background Image */}
+        <Image
+          src="/images/family/Familie Gabathuler.JPG"
+          alt="Familie Gabathuler-Risch auf ihrem Hof"
+          fill
+          className="object-cover"
+          priority
+          quality={90}
+          sizes="100vw"
+        />
 
         {/* Overlay */}
-        <div className="absolute inset-0 bg-primary-900/40" />
+        <div className="absolute inset-0 bg-primary-900/50" />
 
         {/* Content */}
         <div className="relative z-10 container-custom text-center px-4 py-32">
@@ -94,12 +96,14 @@ export default function AboutPage() {
               transition={{ duration: 0.7 }}
               className="relative order-2 lg:order-1"
             >
-              <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-gradient-to-br from-primary-200 to-primary-300 relative">
+              <div className="aspect-[4/3] rounded-2xl overflow-hidden relative group">
                 <Image
-                  src="/images/family/Familie Gabathuler.JPG"
+                  src="/images/family/Familie Gabathuler2.jpg"
                   alt="Familie Gabathuler-Risch"
                   fill
-                  className="object-cover"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  quality={85}
                 />
               </div>
               <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-secondary-100 rounded-2xl -z-10" />
@@ -234,12 +238,14 @@ export default function AboutPage() {
               transition={{ duration: 0.7 }}
               className="relative"
             >
-              <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-gradient-to-br from-secondary-200 to-secondary-300 relative">
+              <div className="aspect-[4/3] rounded-2xl overflow-hidden relative group">
                 <Image
-                  src="/images/Kuehe auf Alp.jpg"
-                  alt="Kühe auf der Alp"
+                  src="/images/farm/Kuehe auf Alp.jpg"
+                  alt="Kühe auf der Alp mit Bergpanorama"
                   fill
-                  className="object-cover"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  quality={85}
                 />
               </div>
               <div className="absolute -top-6 -left-6 w-24 h-24 bg-accent-100 rounded-xl -z-10" />
@@ -248,8 +254,59 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Philosophy Section */}
+      {/* Farm Gallery Section */}
       <section className="section bg-white">
+        <div className="container-custom">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <span className="inline-block text-secondary-600 font-medium text-sm tracking-wider uppercase mb-4">
+              Impressionen
+            </span>
+            <h2 className="section-title">Bilder von unserem Hof</h2>
+          </motion.div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { src: '/images/farm/Kuh mit Kalb.jpg', alt: 'Kuh mit Kalb auf der Weide' },
+              { src: '/images/farm/Viele Kuehe.jpg', alt: 'Unsere Kuhherde' },
+              { src: '/images/farm/Feld mit Berge im Hintergrund.jpg', alt: 'Felder mit Bündner Bergen' },
+              { src: '/images/farm/Kuh mit Mann.jpg', alt: 'Josef Gabathuler mit einer Kuh' },
+              { src: '/images/farm/Kuehe im Stall.jpg', alt: 'Kühe im Stall' },
+              { src: '/images/farm/Ernte.jpg', alt: 'Ernte auf dem Feld' },
+              { src: '/images/farm/Kuh mit Kalb3.jpg', alt: 'Mutterkuh mit Kalb' },
+              { src: '/images/Feld mit Sonnenuntergang.jpg', alt: 'Sonnenuntergang über den Feldern' },
+            ].map((image, index) => (
+              <motion.div
+                key={image.src}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.05 }}
+                className="aspect-square rounded-xl overflow-hidden relative group"
+              >
+                <Image
+                  src={image.src}
+                  alt={image.alt}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                  sizes="(max-width: 768px) 50vw, 25vw"
+                  quality={85}
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-primary-900/0 group-hover:bg-primary-900/30 transition-colors duration-300" />
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Philosophy Section */}
+      <section className="section bg-primary-50">
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -290,29 +347,46 @@ export default function AboutPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="section bg-primary-100">
+      <section className="section bg-white">
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="bg-white rounded-3xl p-8 md:p-12 text-center shadow-lg"
+            className="relative rounded-3xl overflow-hidden"
           >
-            <h2 className="section-title mb-4">
-              Lernen Sie uns kennen
-            </h2>
-            <p className="text-primary-600 max-w-2xl mx-auto mb-8">
-              Besuchen Sie unseren Hofladen in Fläsch oder kontaktieren Sie uns für eine Bestellung.
-              Wir freuen uns auf Sie!
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/contact" className="btn-primary">
-                Kontakt aufnehmen
-              </Link>
-              <Link href="/products" className="btn-secondary">
-                Unsere Produkte
-              </Link>
+            {/* Background Image */}
+            <div className="absolute inset-0">
+              <Image
+                src="/images/farm/Feld mit Kuehen5.jpg"
+                alt="Kühe auf dem Feld"
+                fill
+                className="object-cover"
+                sizes="100vw"
+                quality={85}
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-primary-900/60" />
+            </div>
+
+            {/* Content */}
+            <div className="relative z-10 p-8 md:p-12 text-center">
+              <h2 className="font-serif text-3xl md:text-4xl font-bold text-white mb-4">
+                Lernen Sie uns kennen
+              </h2>
+              <p className="text-white/80 max-w-2xl mx-auto mb-8">
+                Besuchen Sie unseren Hofladen in Fläsch oder kontaktieren Sie uns für eine Bestellung.
+                Wir freuen uns auf Sie!
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link href="/contact" className="btn-primary bg-secondary-500 hover:bg-secondary-600">
+                  Kontakt aufnehmen
+                </Link>
+                <Link href="/products" className="btn-secondary border-white/30 text-white hover:bg-white hover:text-primary-800">
+                  Unsere Produkte
+                </Link>
+              </div>
             </div>
           </motion.div>
         </div>
