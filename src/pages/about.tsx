@@ -78,7 +78,7 @@ export default function AboutPage() {
               Familie Gabathuler-Risch
             </h1>
             <p className="text-xl text-white/80 max-w-2xl mx-auto">
-              Tradition und Leidenschaft seit Generationen
+              Landwirtschaft in der Bündner Herrschaft
             </p>
           </motion.div>
         </div>
@@ -121,14 +121,14 @@ export default function AboutPage() {
                 Unsere Familie
               </span>
               <h2 className="section-title mb-6">
-                Mit Herzblut für Sie da
+                Willkommen bei uns
               </h2>
               <div className="space-y-4 text-primary-600 leading-relaxed mb-8">
                 <p>
-                  Wir sind Josef und Elsbeth Gabathuler-Risch und bewirtschaften unseren Hof in Fläsch mit viel Herzblut. Die Landwirtschaft liegt uns im Blut – sie ist nicht nur unser Beruf, sondern unsere Berufung.
+                  Wir sind die Familie Gabathuler aus Fläsch in der Bündner Herrschaft. An unserem Leben auf dem Bauernhof gefällt uns der tägliche Kontakt mit den Tieren und der Natur.
                 </p>
                 <p>
-                  Gemeinsam mit unserer Familie führen wir den Betrieb nach traditionellen Werten und mit modernem Wissen. Die Verbundenheit zur Natur und zu unseren Tieren prägt unsere tägliche Arbeit.
+                  Wir arbeiten auf unserem Betrieb mit und für die Natur.
                 </p>
               </div>
 
@@ -153,8 +153,8 @@ export default function AboutPage() {
                   <svg className="w-5 h-5 text-secondary-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
-                  <a href="mailto:jogari@bluewin.ch" className="text-primary-700 hover:text-secondary-600 transition-colors">
-                    jogari@bluewin.ch
+                  <a href="mailto:jogari@outlook.ch" className="text-primary-700 hover:text-secondary-600 transition-colors">
+                    jogari@outlook.ch
                   </a>
                 </div>
               </div>

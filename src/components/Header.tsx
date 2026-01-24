@@ -8,6 +8,7 @@ const navItems = [
   { href: '/about', label: 'Über uns' },
   { href: '/products', label: 'Produkte' },
   { href: '/hofladen', label: 'Hofladen' },
+  { href: '/bestellen', label: 'Bestellen' },
   { href: '/contact', label: 'Kontakt' },
 ]
 

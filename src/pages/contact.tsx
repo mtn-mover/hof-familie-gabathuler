@@ -284,10 +284,10 @@ export default function ContactPage() {
                     <div>
                       <h3 className="font-semibold text-primary-800 mb-1">E-Mail</h3>
                       <a
-                        href="mailto:jogari@bluewin.ch"
+                        href="mailto:jogari@outlook.ch"
                         className="text-secondary-600 hover:text-secondary-700 transition-colors"
                       >
-                        jogari@bluewin.ch
+                        jogari@outlook.ch
                       </a>
                       <p className="text-sm text-primary-500 mt-1">
                         Schreiben Sie uns jederzeit
@@ -313,7 +313,7 @@ export default function ContactPage() {
                   Selbstbedienung rund um die Uhr
                 </p>
                 <p className="text-sm text-primary-600">
-                  Bezahlung bequem mit Twint. Bedienen Sie sich jederzeit selbst.
+                  Bezahlung mit Twint oder Bar. Bedienen Sie sich jederzeit selbst.
                 </p>
               </div>
             </motion.div>

@@ -1,7 +1,10 @@
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
 import Layout from '@/components/Layout'
+import type { Termin } from './api/termine'
+import type { Preise } from './api/preise'
 
 const mischpaketContents = [
   { amount: '1.7 kg', item: 'Gehacktes' },
@@ -14,13 +17,46 @@ const mischpaketContents = [
   { amount: '0.6 kg', item: 'Huft/Filet' },
 ]
 
-const deliveryDates = [
-  { month: 'November', year: '2024', status: 'available' },
-  { month: 'Dezember', year: '2024', status: 'available' },
-  { month: 'April/Mai', year: '2025', status: 'planned' },
-]
+const fleischstueckeLabels: Record<string, string> = {
+  siedfleisch: 'Siedfleisch',
+  gehacktes: 'Gehacktes',
+  geschnetzeltes: 'Geschnetzeltes',
+  voressen: 'Voressen',
+  braten: 'Braten',
+  fleischvogelPlaetzli: 'Fleischvögel Plätzli',
+  saftplaetzli: 'Saftplätzli',
+  plaetzli: 'Plätzli',
+  steak: 'Steak',
+  huft: 'Huft',
+  filet: 'Filet',
+  leber: 'Leber',
+}
 
 export default function ProductsPage() {
+  const [termine, setTermine] = useState<Termin[]>([])
+  const [preise, setPreise] = useState<Preise | null>(null)
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [termineRes, preiseRes] = await Promise.all([
+          fetch('/api/termine'),
+          fetch('/api/preise'),
+        ])
+        const termineData = await termineRes.json()
+        const preiseData = await preiseRes.json()
+
+        setTermine(termineData.termine || [])
+        setPreise(preiseData.preise || null)
+      } catch (error) {
+        console.error('Error loading data:', error)
+      }
+    }
+    loadData()
+  }, [])
+
+  const preis = preise?.mischpaketProKg || 29
+
   return (
     <Layout
       title="Produkte"
@@ -117,7 +153,7 @@ export default function ProductsPage() {
                   </h3>
 
                   <div className="flex items-baseline gap-2 mb-6">
-                    <span className="text-4xl font-bold text-secondary-600">CHF 29.00</span>
+                    <span className="text-4xl font-bold text-secondary-600">CHF {preis.toFixed(2)}</span>
                     <span className="text-primary-600">/kg</span>
                   </div>
 
@@ -130,15 +166,15 @@ export default function ProductsPage() {
                   <div className="flex flex-wrap gap-3 mb-6">
                     <div className="bg-white rounded-lg px-4 py-2 shadow-sm">
                       <span className="font-semibold text-primary-800">10 kg</span>
-                      <span className="text-primary-500 text-sm ml-1">CHF 290</span>
+                      <span className="text-primary-500 text-sm ml-1">CHF {(10 * preis).toFixed(0)}</span>
                     </div>
                     <div className="bg-white rounded-lg px-4 py-2 shadow-sm">
                       <span className="font-semibold text-primary-800">15 kg</span>
-                      <span className="text-primary-500 text-sm ml-1">CHF 435</span>
+                      <span className="text-primary-500 text-sm ml-1">CHF {(15 * preis).toFixed(0)}</span>
                     </div>
                     <div className="bg-white rounded-lg px-4 py-2 shadow-sm">
                       <span className="font-semibold text-primary-800">20 kg</span>
-                      <span className="text-primary-500 text-sm ml-1">CHF 580</span>
+                      <span className="text-primary-500 text-sm ml-1">CHF {(20 * preis).toFixed(0)}</span>
                     </div>
                   </div>
 
@@ -155,7 +191,7 @@ export default function ProductsPage() {
                     </div>
                   </div>
 
-                  <Link href="/contact" className="btn-primary w-full sm:w-auto">
+                  <Link href="/bestellen" className="btn-primary w-full sm:w-auto">
                     Jetzt bestellen
                   </Link>
                 </div>
@@ -164,6 +200,45 @@ export default function ProductsPage() {
           </motion.div>
         </div>
       </section>
+
+      {/* Einzelpreise Section */}
+      {preise && (
+        <section className="section bg-primary-50">
+          <div className="container-custom">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="text-center mb-12"
+            >
+              <span className="inline-block text-secondary-600 font-medium text-sm tracking-wider uppercase mb-4">
+                Einzeln bestellen
+              </span>
+              <h2 className="section-title">Preisliste Einzelstücke</h2>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="max-w-3xl mx-auto"
+            >
+              <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-px bg-primary-200">
+                  {Object.entries(preise.einzelpreise).map(([key, value]) => (
+                    <div key={key} className="bg-white p-4 flex justify-between items-center">
+                      <span className="text-primary-700">{fleischstueckeLabels[key]}</span>
+                      <span className="font-semibold text-secondary-600">CHF {value.toFixed(2)}/kg</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+      )}
 
       {/* Liefertermine Section */}
       <section className="section bg-white">
@@ -179,7 +254,7 @@ export default function ProductsPage() {
               <span className="inline-block text-secondary-600 font-medium text-sm tracking-wider uppercase mb-4">
                 Planung
               </span>
-              <h2 className="section-title">Geplante Schlachttermine</h2>
+              <h2 className="section-title">Schlachttermine</h2>
             </motion.div>
 
             <motion.div
@@ -189,36 +264,28 @@ export default function ProductsPage() {
               transition={{ duration: 0.6 }}
               className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
             >
-              {deliveryDates.map((date) => (
+              {termine.map((termin) => (
                 <div
-                  key={`${date.month}-${date.year}`}
+                  key={termin.id}
                   className={`rounded-xl p-6 text-center ${
-                    date.status === 'available'
+                    termin.status === 'aktiv'
                       ? 'bg-secondary-50 border-2 border-secondary-200'
-                      : 'bg-primary-50 border-2 border-primary-200'
+                      : 'bg-red-50 border-2 border-red-200'
                   }`}
                 >
                   <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium mb-4 ${
-                    date.status === 'available'
+                    termin.status === 'aktiv'
                       ? 'bg-secondary-100 text-secondary-700'
-                      : 'bg-primary-200 text-primary-700'
+                      : 'bg-red-100 text-red-700'
                   }`}>
-                    {date.status === 'available' ? (
-                      <>
-                        <span className="w-2 h-2 bg-secondary-500 rounded-full" />
-                        Verfügbar
-                      </>
-                    ) : (
-                      <>
-                        <span className="w-2 h-2 bg-primary-400 rounded-full" />
-                        Geplant
-                      </>
-                    )}
+                    <span className={`w-2 h-2 rounded-full ${
+                      termin.status === 'aktiv' ? 'bg-secondary-500' : 'bg-red-500'
+                    }`} />
+                    {termin.status === 'aktiv' ? 'Verfügbar' : 'Ausverkauft'}
                   </div>
-                  <h3 className="font-serif text-xl font-semibold text-primary-800 mb-1">
-                    {date.month}
+                  <h3 className="font-serif text-xl font-semibold text-primary-800">
+                    {termin.name}
                   </h3>
-                  <p className="text-primary-600">{date.year}</p>
                 </div>
               ))}
             </motion.div>
@@ -239,7 +306,7 @@ export default function ProductsPage() {
                 <h4 className="font-semibold text-primary-800 mb-1">Vorbestellung erforderlich</h4>
                 <p className="text-primary-600 text-sm">
                   Um Ihnen frisches Fleisch in bester Qualität garantieren zu können, bitten wir Sie,
-                  Ihre Bestellung rechtzeitig aufzugeben. Kontaktieren Sie uns für weitere Informationen.
+                  Ihre Bestellung rechtzeitig aufzugeben.
                 </p>
               </div>
             </motion.div>
@@ -276,11 +343,10 @@ export default function ProductsPage() {
               Bereit für frisches Fleisch vom Hof?
             </h2>
             <p className="text-secondary-100 max-w-2xl mx-auto mb-8">
-              Kontaktieren Sie uns für Ihre Bestellung. Wir beraten Sie gerne persönlich
-              und stellen Ihr individuelles Paket zusammen.
+              Bestellen Sie jetzt online oder kontaktieren Sie uns für eine persönliche Beratung.
             </p>
             <Link
-              href="/contact"
+              href="/bestellen"
               className="inline-flex items-center justify-center px-10 py-4 bg-white text-secondary-600 font-medium rounded-full transition-all duration-300 hover:bg-primary-50 hover:shadow-lg hover:-translate-y-0.5"
             >
               Zur Bestellung

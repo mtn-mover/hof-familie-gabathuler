@@ -12,7 +12,7 @@ interface LayoutProps {
 export default function Layout({
   children,
   title = 'Hof Familie Gabathuler',
-  description = 'Frische Produkte aus artgerechter Mutterkuhhaltung - Direkt aus Fläsch, Graubünden. Bio Suisse zertifiziert.',
+  description = 'Frische Produkte aus artgerechter Mutterkuhhaltung - Direkt aus Fläsch, Graubünden.',
 }: LayoutProps) {
   const fullTitle = title === 'Hof Familie Gabathuler'
     ? title

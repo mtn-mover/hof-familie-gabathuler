@@ -6,7 +6,7 @@ import Layout from '@/components/Layout'
 const offerings = [
   {
     title: 'Rindfleisch',
-    description: 'Mischpakete und einzelne Fleischstücke aus unserer Mutterkuhhaltung',
+    description: 'Mischpakete und einzelne Fleischstücke aus unserer Mutterkuhhaltung, Trockenfleisch und verschiedene Würste',
     icon: (
       <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -14,8 +14,8 @@ const offerings = [
     ),
   },
   {
-    title: 'Frisch auf Bestellung',
-    description: 'Wir schlachten zu festen Terminen - so erhalten Sie garantiert frisches Fleisch',
+    title: 'Alpkäse & Alpbutter',
+    description: 'Käse und Butter von der Alp, dazu frische Eier vom Hof',
     icon: (
       <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -24,7 +24,7 @@ const offerings = [
   },
   {
     title: 'Saisonale Produkte',
-    description: 'Je nach Saison weitere Hofprodukte wie Kartoffeln und Gemüse',
+    description: 'Je nach Saison weitere Hofprodukte wie Kartoffeln',
     icon: (
       <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
@@ -130,7 +130,7 @@ export default function HofladenPage() {
                   <strong className="text-white">Selbstbedienung rund um die Uhr</strong>
                 </p>
                 <p className="text-secondary-200">
-                  Unser Hofladen ist täglich geöffnet. Bedienen Sie sich selbst und bezahlen Sie bequem mit Twint.
+                  Unser Hofladen ist täglich geöffnet. Bedienen Sie sich selbst und bezahlen Sie mit Twint oder Bar.
                 </p>
               </div>
               <div className="text-center md:text-right">
@@ -138,7 +138,7 @@ export default function HofladenPage() {
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
                   </svg>
-                  Bezahlung mit Twint
+                  Twint oder Bar
                 </div>
               </div>
             </div>

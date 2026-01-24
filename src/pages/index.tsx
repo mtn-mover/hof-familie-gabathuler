@@ -41,7 +41,7 @@ const features = [
   {
     icon: <QualitaetIcon />,
     title: 'Frische Qualität',
-    description: 'Bio Suisse zertifiziert. Höchste Qualität durch traditionelle Landwirtschaft und nachhaltige Produktion.',
+    description: 'Höchste Qualität durch traditionelle Landwirtschaft und naturnahe Produktion.',
     href: '/products',
     linkText: 'Unsere Produkte',
   },
@@ -86,17 +86,6 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: 'easeOut' }}
           >
-            {/* Badge */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
-              className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full mb-8"
-            >
-              <span className="w-2 h-2 bg-secondary-400 rounded-full animate-pulse" />
-              <span className="text-white/90 text-sm font-medium">Bio Suisse zertifiziert</span>
-            </motion.div>
-
             {/* Main Heading */}
             <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
               Willkommen auf dem
@@ -329,7 +318,7 @@ export default function Home() {
                       </div>
                       <div className="text-white/80 mt-3 pt-3 border-t border-white/20">
                         <p className="font-medium text-white">Selbstbedienung</p>
-                        <p className="mt-1">Bezahlung bequem mit Twint</p>
+                        <p className="mt-1">Bezahlung mit Twint oder Bar</p>
                       </div>
                     </div>
                   </div>

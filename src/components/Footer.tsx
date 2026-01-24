@@ -5,6 +5,7 @@ const quickLinks = [
   { href: '/about', label: 'Über uns' },
   { href: '/products', label: 'Produkte' },
   { href: '/hofladen', label: 'Hofladen' },
+  { href: '/bestellen', label: 'Bestellen' },
   { href: '/contact', label: 'Kontakt' },
 ]
 
@@ -45,13 +46,6 @@ export default function Footer() {
               Frische Produkte aus artgerechter Mutterkuhhaltung.
               Direkt vom Hof zu Ihnen nach Hause.
             </p>
-            <div className="flex items-center gap-2">
-              <div className="bg-secondary-600/30 px-3 py-1.5 rounded-full">
-                <span className="text-secondary-400 text-xs font-medium">
-                  Bio Suisse zertifiziert
-                </span>
-              </div>
-            </div>
           </div>
 
           {/* Contact Section */}
@@ -108,7 +102,7 @@ export default function Footer() {
                 081 302 23 19
               </a>
               <a
-                href="mailto:jogari@bluewin.ch"
+                href="mailto:jogari@outlook.ch"
                 className="flex items-center gap-3 text-primary-300 hover:text-secondary-400 transition-colors duration-200"
               >
                 <svg
@@ -125,7 +119,7 @@ export default function Footer() {
                     d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
                   />
                 </svg>
-                jogari@bluewin.ch
+                jogari@outlook.ch
               </a>
             </address>
           </div>
@@ -176,7 +170,7 @@ export default function Footer() {
                   Selbstbedienung
                 </p>
                 <p className="text-primary-400 text-xs">
-                  Bezahlung bequem mit Twint
+                  Bezahlung mit Twint oder Bar
                 </p>
               </div>
             </div>
