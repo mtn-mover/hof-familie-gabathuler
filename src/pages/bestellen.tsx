@@ -84,7 +84,7 @@ export default function BestellenPage() {
         const termineData = await termineRes.json()
         const preiseData = await preiseRes.json()
 
-        setTermine(termineData.termine?.filter((t: Termin) => t.status === 'aktiv') || [])
+        setTermine(termineData.termine || [])
         setPreise(preiseData.preise || null)
       } catch (error) {
         console.error('Error loading data:', error)
@@ -305,33 +305,50 @@ export default function BestellenPage() {
               <h2 className="font-serif text-xl font-bold text-primary-800 mb-6">
                 Liefertermin <span className="text-red-500">*</span>
               </h2>
-              {termine.length === 0 ? (
+              {termine.filter((t) => t.status === 'aktiv').length === 0 ? (
                 <p className="text-primary-600">
                   Aktuell sind keine Termine verfügbar. Bitte kontaktieren Sie uns.
                 </p>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                  {termine.map((termin) => (
-                    <label
-                      key={termin.id}
-                      className={`flex items-center p-4 rounded-xl border-2 cursor-pointer transition-colors ${
-                        formData.liefertermin === termin.name
-                          ? 'border-secondary-500 bg-secondary-50'
-                          : 'border-primary-200 hover:border-primary-300'
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name="liefertermin"
-                        value={termin.name}
-                        checked={formData.liefertermin === termin.name}
-                        onChange={(e) => updateField('liefertermin', e.target.value)}
-                        className="sr-only"
-                        required
-                      />
-                      <span className="text-primary-800 font-medium">{termin.name}</span>
-                    </label>
-                  ))}
+                  {termine.map((termin) => {
+                    const isAusverkauft = termin.status === 'ausverkauft'
+                    return (
+                      <label
+                        key={termin.id}
+                        className={`flex items-center justify-between p-4 rounded-xl border-2 transition-colors ${
+                          isAusverkauft
+                            ? 'border-primary-200 bg-primary-100 cursor-not-allowed opacity-60'
+                            : formData.liefertermin === termin.name
+                              ? 'border-secondary-500 bg-secondary-50 cursor-pointer'
+                              : 'border-primary-200 hover:border-primary-300 cursor-pointer'
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="liefertermin"
+                          value={termin.name}
+                          checked={formData.liefertermin === termin.name}
+                          onChange={(e) => updateField('liefertermin', e.target.value)}
+                          className="sr-only"
+                          required
+                          disabled={isAusverkauft}
+                        />
+                        <span
+                          className={`font-medium ${
+                            isAusverkauft ? 'text-primary-400 line-through' : 'text-primary-800'
+                          }`}
+                        >
+                          {termin.name}
+                        </span>
+                        {isAusverkauft && (
+                          <span className="text-xs font-semibold text-red-500 bg-red-100 px-2 py-1 rounded-full">
+                            ausverkauft
+                          </span>
+                        )}
+                      </label>
+                    )
+                  })}
                 </div>
               )}
             </div>
@@ -713,7 +730,7 @@ export default function BestellenPage() {
               {submitStatus === 'error' && <p className="text-red-500 mb-4">{errorMessage}</p>}
               <button
                 type="submit"
-                disabled={isSubmitting || termine.length === 0}
+                disabled={isSubmitting || termine.filter((t) => t.status === 'aktiv').length === 0}
                 className="btn-primary text-lg px-12 py-4 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? 'Wird gesendet...' : 'Bestellung absenden'}
