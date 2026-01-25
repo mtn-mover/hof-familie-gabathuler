@@ -185,17 +185,6 @@ export default function HofladenPage() {
             ))}
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-center mt-10"
-          >
-            <Link href="/products" className="btn-primary">
-              Alle Produkte ansehen
-            </Link>
-          </motion.div>
         </div>
       </section>
 
