@@ -1,4 +1,4 @@
-import { useState, useEffect, FormEvent } from 'react'
+import { useState, useEffect, FormEvent, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import Layout from '@/components/Layout'
 import type { Termin } from './api/termine'
@@ -31,6 +31,15 @@ const mischpaketInhalt = [
   { menge: '0.6 kg', name: 'Huft/Filet' },
 ]
 
+const portionsgroessen = [
+  { value: 'klein', label: 'klein (ca. 120g)', gramm: 120 },
+  { value: 'mittel', label: 'mittel (ca. 250g)', gramm: 250 },
+  { value: 'gross', label: 'gross (ca. 500g)', gramm: 500 },
+  { value: 'sehr-gross', label: 'sehr gross (ca. 1kg)', gramm: 1000 },
+]
+
+const bratenOptionen = ['Braten', 'Plätzli für Fleischvögel', 'Saftplätzli']
+
 export default function BestellenPage() {
   const [termine, setTermine] = useState<Termin[]>([])
   const [preise, setPreise] = useState<Preise | null>(null)
@@ -50,12 +59,11 @@ export default function BestellenPage() {
     mischpaketGroesse: '',
     portionsgroesse: '',
     mehrGehacktes: false,
-    bratenAufteilen: false,
-    bratenAufteilungDetails: '',
+    bratenAufteilung: [],
     einzelbestellungen: fleischstuecke.map((f) => ({
       fleischstueck: f.label,
       portionen: 0,
-      gramm: 500,
+      portionsgroesse: 'mittel (ca. 250g)',
     })),
   })
 
@@ -79,6 +87,36 @@ export default function BestellenPage() {
     }
     loadData()
   }, [])
+
+  // Calculate totals
+  const totals = useMemo(() => {
+    if (!preise) return { mischpaket: 0, einzelstuecke: 0, gesamt: 0 }
+
+    // Mischpaket total
+    const mischpaketKg = formData.mischpaketGroesse ? parseInt(formData.mischpaketGroesse) : 0
+    const mischpaketTotal = mischpaketKg * preise.mischpaketProKg
+
+    // Einzelstücke total
+    let einzelTotal = 0
+    formData.einzelbestellungen?.forEach((item, index) => {
+      if (item.portionen > 0) {
+        const pricePerKg =
+          preise.einzelpreise[fleischstuecke[index].key as keyof typeof preise.einzelpreise] || 0
+        const selectedSize = portionsgroessen.find(
+          (p) => p.label === item.portionsgroesse
+        )
+        const grammPerPortion = selectedSize?.gramm || 250
+        const totalKg = (item.portionen * grammPerPortion) / 1000
+        einzelTotal += totalKg * pricePerKg
+      }
+    })
+
+    return {
+      mischpaket: mischpaketTotal,
+      einzelstuecke: einzelTotal,
+      gesamt: mischpaketTotal + einzelTotal,
+    }
+  }, [formData, preise])
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -108,12 +146,11 @@ export default function BestellenPage() {
           mischpaketGroesse: '',
           portionsgroesse: '',
           mehrGehacktes: false,
-          bratenAufteilen: false,
-          bratenAufteilungDetails: '',
+          bratenAufteilung: [],
           einzelbestellungen: fleischstuecke.map((f) => ({
             fleischstueck: f.label,
             portionen: 0,
-            gramm: 500,
+            portionsgroesse: 'mittel (ca. 250g)',
           })),
         })
       } else {
@@ -128,11 +165,27 @@ export default function BestellenPage() {
     setIsSubmitting(false)
   }
 
-  const updateField = (field: keyof Bestellung, value: string | boolean) => {
+  const updateField = (field: keyof Bestellung, value: string | boolean | string[]) => {
     setFormData({ ...formData, [field]: value })
   }
 
-  const updateEinzelbestellung = (index: number, field: 'portionen' | 'gramm', value: number) => {
+  const toggleBratenOption = (option: string) => {
+    const current = formData.bratenAufteilung || []
+    if (current.includes(option)) {
+      updateField(
+        'bratenAufteilung',
+        current.filter((o) => o !== option)
+      )
+    } else {
+      updateField('bratenAufteilung', [...current, option])
+    }
+  }
+
+  const updateEinzelbestellung = (
+    index: number,
+    field: 'portionen' | 'portionsgroesse',
+    value: number | string
+  ) => {
     const updated = [...(formData.einzelbestellungen || [])]
     updated[index] = { ...updated[index], [field]: value }
     setFormData({ ...formData, einzelbestellungen: updated })
@@ -160,21 +213,28 @@ export default function BestellenPage() {
               className="max-w-lg mx-auto"
             >
               <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <svg className="w-10 h-10 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                <svg
+                  className="w-10 h-10 text-green-500"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
                 </svg>
               </div>
               <h1 className="font-serif text-3xl font-bold text-primary-800 mb-4">
                 Bestellung gesendet!
               </h1>
               <p className="text-primary-600 mb-8">
-                Vielen Dank für Ihre Bestellung. Sie erhalten in Kürze eine Bestätigungsmail.
-                Wir werden uns bei Ihnen melden.
+                Vielen Dank für Ihre Bestellung. Sie erhalten in Kürze eine Bestätigungsmail. Wir
+                werden uns bei Ihnen melden.
               </p>
-              <button
-                onClick={() => setSubmitStatus('idle')}
-                className="btn-primary"
-              >
+              <button onClick={() => setSubmitStatus('idle')} className="btn-primary">
                 Neue Bestellung
               </button>
             </motion.div>
@@ -192,10 +252,7 @@ export default function BestellenPage() {
       {/* Hero */}
       <section className="bg-hero-gradient py-20">
         <div className="container-custom text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
             <h1 className="font-serif text-4xl md:text-5xl font-bold text-white mb-4">
               Rindfleisch bestellen
             </h1>
@@ -210,72 +267,6 @@ export default function BestellenPage() {
       <section className="section bg-white">
         <div className="container-custom max-w-4xl">
           <form onSubmit={handleSubmit} className="space-y-10">
-            {/* Kundendaten */}
-            <div className="bg-primary-50 rounded-2xl p-6 md:p-8">
-              <h2 className="font-serif text-xl font-bold text-primary-800 mb-6">
-                Ihre Daten
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-primary-700 mb-2">
-                    Name <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={formData.name}
-                    onChange={(e) => updateField('name', e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-primary-200 focus:outline-none focus:ring-2 focus:ring-secondary-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-primary-700 mb-2">
-                    E-Mail <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    value={formData.email}
-                    onChange={(e) => updateField('email', e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-primary-200 focus:outline-none focus:ring-2 focus:ring-secondary-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-primary-700 mb-2">
-                    Adresse
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.adresse}
-                    onChange={(e) => updateField('adresse', e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-primary-200 focus:outline-none focus:ring-2 focus:ring-secondary-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-primary-700 mb-2">
-                    PLZ / Ort
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.plzOrt}
-                    onChange={(e) => updateField('plzOrt', e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-primary-200 focus:outline-none focus:ring-2 focus:ring-secondary-500"
-                  />
-                </div>
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-primary-700 mb-2">
-                    Telefon
-                  </label>
-                  <input
-                    type="tel"
-                    value={formData.telefon}
-                    onChange={(e) => updateField('telefon', e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-primary-200 focus:outline-none focus:ring-2 focus:ring-secondary-500"
-                  />
-                </div>
-              </div>
-            </div>
-
             {/* Liefertermin */}
             <div className="bg-primary-50 rounded-2xl p-6 md:p-8">
               <h2 className="font-serif text-xl font-bold text-primary-800 mb-6">
@@ -314,9 +305,7 @@ export default function BestellenPage() {
 
             {/* Mischpaket */}
             <div className="bg-primary-50 rounded-2xl p-6 md:p-8">
-              <h2 className="font-serif text-xl font-bold text-primary-800 mb-2">
-                Mischpaket
-              </h2>
+              <h2 className="font-serif text-xl font-bold text-primary-800 mb-2">Mischpaket</h2>
               {preise && (
                 <p className="text-primary-600 mb-6">
                   Preis: CHF {preise.mischpaketProKg.toFixed(2)}/kg
@@ -365,18 +354,23 @@ export default function BestellenPage() {
                     </div>
                   </div>
 
-                  {/* Portionsgrösse */}
+                  {/* Portionsgrösse Dropdown */}
                   <div className="mb-6">
                     <label className="block text-sm font-medium text-primary-700 mb-2">
-                      Gewünschte Portionsgrösse (g)
+                      Gewünschte Portionsgrösse
                     </label>
-                    <input
-                      type="number"
+                    <select
                       value={formData.portionsgroesse}
                       onChange={(e) => updateField('portionsgroesse', e.target.value)}
-                      placeholder="z.B. 500"
-                      className="w-full max-w-xs px-4 py-3 rounded-xl border border-primary-200 focus:outline-none focus:ring-2 focus:ring-secondary-500"
-                    />
+                      className="w-full max-w-xs px-4 py-3 rounded-xl border border-primary-200 focus:outline-none focus:ring-2 focus:ring-secondary-500 bg-white"
+                    >
+                      <option value="">Bitte wählen...</option>
+                      {portionsgroessen.map((option) => (
+                        <option key={option.value} value={option.label}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   {/* Sonderwünsche */}
@@ -393,28 +387,31 @@ export default function BestellenPage() {
                         Anstelle von Siedfleisch mehr Gehacktes
                       </span>
                     </label>
-                    <label className="flex items-start gap-3 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={formData.bratenAufteilen}
-                        onChange={(e) => updateField('bratenAufteilen', e.target.checked)}
-                        className="w-5 h-5 rounded border-primary-300 text-secondary-500 focus:ring-secondary-500 mt-0.5"
-                      />
-                      <div>
-                        <span className="text-primary-600">
-                          Braten aufteilen (Braten, Fleischvögel Plätzli, Saftplätzli)
-                        </span>
-                        {formData.bratenAufteilen && (
-                          <input
-                            type="text"
-                            value={formData.bratenAufteilungDetails}
-                            onChange={(e) => updateField('bratenAufteilungDetails', e.target.value)}
-                            placeholder="Wie soll aufgeteilt werden?"
-                            className="mt-2 w-full px-4 py-2 rounded-lg border border-primary-200 focus:outline-none focus:ring-2 focus:ring-secondary-500"
-                          />
-                        )}
+
+                    {/* Braten Aufteilung - Multi-Select */}
+                    <div className="mt-4">
+                      <p className="text-primary-600 mb-3">Braten aufteilen in:</p>
+                      <div className="flex flex-wrap gap-3">
+                        {bratenOptionen.map((option) => (
+                          <label
+                            key={option}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 cursor-pointer transition-colors ${
+                              formData.bratenAufteilung?.includes(option)
+                                ? 'border-secondary-500 bg-secondary-50'
+                                : 'border-primary-200 hover:border-primary-300'
+                            }`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={formData.bratenAufteilung?.includes(option) || false}
+                              onChange={() => toggleBratenOption(option)}
+                              className="w-4 h-4 rounded border-primary-300 text-secondary-500 focus:ring-secondary-500"
+                            />
+                            <span className="text-primary-700">{option}</span>
+                          </label>
+                        ))}
                       </div>
-                    </label>
+                    </div>
                   </div>
                 </>
               )}
@@ -430,56 +427,176 @@ export default function BestellenPage() {
               </p>
 
               <div className="space-y-4">
-                {formData.einzelbestellungen?.map((item, index) => (
-                  <div
-                    key={fleischstuecke[index].key}
-                    className="grid grid-cols-12 gap-4 items-center bg-white rounded-xl p-4"
-                  >
-                    <div className="col-span-12 sm:col-span-4">
-                      <span className="font-medium text-primary-800">
-                        {item.fleischstueck}
-                      </span>
-                      {preise && (
-                        <span className="text-sm text-primary-500 ml-2">
-                          CHF {preise.einzelpreise[fleischstuecke[index].key as keyof typeof preise.einzelpreise]?.toFixed(2)}/kg
-                        </span>
-                      )}
+                {formData.einzelbestellungen?.map((item, index) => {
+                  const pricePerKg = preise
+                    ? preise.einzelpreise[
+                        fleischstuecke[index].key as keyof typeof preise.einzelpreise
+                      ]
+                    : 0
+                  const selectedSize = portionsgroessen.find(
+                    (p) => p.label === item.portionsgroesse
+                  )
+                  const grammPerPortion = selectedSize?.gramm || 250
+                  const itemTotal =
+                    item.portionen > 0
+                      ? ((item.portionen * grammPerPortion) / 1000) * pricePerKg
+                      : 0
+
+                  return (
+                    <div
+                      key={fleischstuecke[index].key}
+                      className="grid grid-cols-12 gap-4 items-center bg-white rounded-xl p-4"
+                    >
+                      <div className="col-span-12 sm:col-span-3">
+                        <span className="font-medium text-primary-800">{item.fleischstueck}</span>
+                        {preise && (
+                          <span className="text-sm text-primary-500 block">
+                            CHF {pricePerKg?.toFixed(2)}/kg
+                          </span>
+                        )}
+                      </div>
+                      <div className="col-span-4 sm:col-span-2">
+                        <label className="text-xs text-primary-500 mb-1 block">Portionen</label>
+                        <input
+                          type="number"
+                          min="0"
+                          value={item.portionen || ''}
+                          onChange={(e) =>
+                            updateEinzelbestellung(
+                              index,
+                              'portionen',
+                              parseInt(e.target.value) || 0
+                            )
+                          }
+                          className="w-full px-3 py-2 rounded-lg border border-primary-200 focus:outline-none focus:ring-2 focus:ring-secondary-500"
+                        />
+                      </div>
+                      <div className="col-span-8 sm:col-span-4">
+                        <label className="text-xs text-primary-500 mb-1 block">
+                          Portionsgrösse
+                        </label>
+                        <select
+                          value={item.portionsgroesse}
+                          onChange={(e) =>
+                            updateEinzelbestellung(index, 'portionsgroesse', e.target.value)
+                          }
+                          className="w-full px-3 py-2 rounded-lg border border-primary-200 focus:outline-none focus:ring-2 focus:ring-secondary-500 bg-white"
+                        >
+                          {portionsgroessen.map((option) => (
+                            <option key={option.value} value={option.label}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="col-span-12 sm:col-span-3 text-right">
+                        {item.portionen > 0 && (
+                          <span className="font-semibold text-secondary-600">
+                            CHF {itemTotal.toFixed(2)}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                    <div className="col-span-6 sm:col-span-4">
-                      <label className="text-xs text-primary-500 mb-1 block">Portionen</label>
-                      <input
-                        type="number"
-                        min="0"
-                        value={item.portionen || ''}
-                        onChange={(e) =>
-                          updateEinzelbestellung(index, 'portionen', parseInt(e.target.value) || 0)
-                        }
-                        className="w-full px-3 py-2 rounded-lg border border-primary-200 focus:outline-none focus:ring-2 focus:ring-secondary-500"
-                      />
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* Total */}
+            {totals.gesamt > 0 && (
+              <div className="bg-secondary-50 border-2 border-secondary-200 rounded-2xl p-6 md:p-8">
+                <h2 className="font-serif text-xl font-bold text-primary-800 mb-4">
+                  Geschätztes Total
+                </h2>
+                <div className="space-y-2">
+                  {totals.mischpaket > 0 && (
+                    <div className="flex justify-between text-primary-700">
+                      <span>Mischpaket ({formData.mischpaketGroesse} kg)</span>
+                      <span>CHF {totals.mischpaket.toFixed(2)}</span>
                     </div>
-                    <div className="col-span-6 sm:col-span-4">
-                      <label className="text-xs text-primary-500 mb-1 block">Gramm/Portion</label>
-                      <input
-                        type="number"
-                        min="100"
-                        step="100"
-                        value={item.gramm}
-                        onChange={(e) =>
-                          updateEinzelbestellung(index, 'gramm', parseInt(e.target.value) || 500)
-                        }
-                        className="w-full px-3 py-2 rounded-lg border border-primary-200 focus:outline-none focus:ring-2 focus:ring-secondary-500"
-                      />
+                  )}
+                  {totals.einzelstuecke > 0 && (
+                    <div className="flex justify-between text-primary-700">
+                      <span>Einzelne Fleischstücke</span>
+                      <span>CHF {totals.einzelstuecke.toFixed(2)}</span>
+                    </div>
+                  )}
+                  <div className="border-t border-secondary-300 pt-2 mt-2">
+                    <div className="flex justify-between text-lg font-bold text-primary-800">
+                      <span>Total (ca.)</span>
+                      <span>CHF {totals.gesamt.toFixed(2)}</span>
                     </div>
                   </div>
-                ))}
+                </div>
+                <p className="text-sm text-primary-500 mt-4">
+                  * Der endgültige Preis kann je nach tatsächlichem Gewicht leicht abweichen.
+                </p>
+              </div>
+            )}
+
+            {/* Kundendaten - Now at the bottom */}
+            <div className="bg-primary-50 rounded-2xl p-6 md:p-8">
+              <h2 className="font-serif text-xl font-bold text-primary-800 mb-6">Ihre Daten</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-primary-700 mb-2">
+                    Name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.name}
+                    onChange={(e) => updateField('name', e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-primary-200 focus:outline-none focus:ring-2 focus:ring-secondary-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-primary-700 mb-2">
+                    E-Mail <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={(e) => updateField('email', e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-primary-200 focus:outline-none focus:ring-2 focus:ring-secondary-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-primary-700 mb-2">Adresse</label>
+                  <input
+                    type="text"
+                    value={formData.adresse}
+                    onChange={(e) => updateField('adresse', e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-primary-200 focus:outline-none focus:ring-2 focus:ring-secondary-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-primary-700 mb-2">
+                    PLZ / Ort
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.plzOrt}
+                    onChange={(e) => updateField('plzOrt', e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-primary-200 focus:outline-none focus:ring-2 focus:ring-secondary-500"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-primary-700 mb-2">Telefon</label>
+                  <input
+                    type="tel"
+                    value={formData.telefon}
+                    onChange={(e) => updateField('telefon', e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-primary-200 focus:outline-none focus:ring-2 focus:ring-secondary-500"
+                  />
+                </div>
               </div>
             </div>
 
             {/* Submit */}
             <div className="text-center">
-              {submitStatus === 'error' && (
-                <p className="text-red-500 mb-4">{errorMessage}</p>
-              )}
+              {submitStatus === 'error' && <p className="text-red-500 mb-4">{errorMessage}</p>}
               <button
                 type="submit"
                 disabled={isSubmitting || termine.length === 0}

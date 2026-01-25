@@ -18,14 +18,13 @@ export type Bestellung = {
 
   // Special requests
   mehrGehacktes: boolean
-  bratenAufteilen: boolean
-  bratenAufteilungDetails?: string
+  bratenAufteilung?: string[] // Array of selected options: 'Braten', 'Plätzli für Fleischvögel', 'Saftplätzli'
 
   // Individual items
   einzelbestellungen?: {
     fleischstueck: string
     portionen: number
-    gramm: number
+    portionsgroesse: string
   }[]
 }
 
@@ -58,7 +57,7 @@ MISCHPAKET:
 `
   }
 
-  if (bestellung.mehrGehacktes || bestellung.bratenAufteilen) {
+  if (bestellung.mehrGehacktes || (bestellung.bratenAufteilung && bestellung.bratenAufteilung.length > 0)) {
     text += `
 SONDERWÜNSCHE:
 `
@@ -66,22 +65,23 @@ SONDERWÜNSCHE:
       text += `- Anstelle von Siedfleisch mehr Gehacktes
 `
     }
-    if (bestellung.bratenAufteilen) {
-      text += `- Braten aufteilen: ${bestellung.bratenAufteilungDetails || 'Keine Details angegeben'}
+    if (bestellung.bratenAufteilung && bestellung.bratenAufteilung.length > 0) {
+      text += `- Braten aufteilen in: ${bestellung.bratenAufteilung.join(', ')}
 `
     }
   }
 
   if (bestellung.einzelbestellungen && bestellung.einzelbestellungen.length > 0) {
-    text += `
+    const activeItems = bestellung.einzelbestellungen.filter((item) => item.portionen > 0)
+    if (activeItems.length > 0) {
+      text += `
 EINZELBESTELLUNGEN:
 `
-    bestellung.einzelbestellungen.forEach((item) => {
-      if (item.portionen > 0) {
-        text += `- ${item.fleischstueck}: ${item.portionen} Portionen à ${item.gramm}g
+      activeItems.forEach((item) => {
+        text += `- ${item.fleischstueck}: ${item.portionen} Portionen (${item.portionsgroesse})
 `
-      }
-    })
+      })
+    }
   }
 
   text += `
