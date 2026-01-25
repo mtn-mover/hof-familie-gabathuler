@@ -302,9 +302,10 @@ export default function BestellenPage() {
           <form onSubmit={handleSubmit} className="space-y-10">
             {/* Liefertermin */}
             <div className="bg-primary-50 rounded-2xl p-6 md:p-8">
-              <h2 className="font-serif text-xl font-bold text-primary-800 mb-6">
+              <h2 className="font-serif text-xl font-bold text-primary-800 mb-2">
                 Liefertermin <span className="text-red-500">*</span>
               </h2>
+              <p className="text-primary-600 mb-6">Bitte wählen Sie einen Termin aus:</p>
               {termine.filter((t) => t.status === 'aktiv').length === 0 ? (
                 <p className="text-primary-600">
                   Aktuell sind keine Termine verfügbar. Bitte kontaktieren Sie uns.
@@ -313,29 +314,44 @@ export default function BestellenPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                   {termine.map((termin) => {
                     const isAusverkauft = termin.status === 'ausverkauft'
+                    const isSelected = formData.liefertermin === termin.name
                     return (
                       <label
                         key={termin.id}
-                        className={`flex items-center justify-between p-4 rounded-xl border-2 transition-colors ${
+                        className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all ${
                           isAusverkauft
                             ? 'border-primary-200 bg-primary-100 cursor-not-allowed opacity-60'
-                            : formData.liefertermin === termin.name
-                              ? 'border-secondary-500 bg-secondary-50 cursor-pointer'
-                              : 'border-primary-200 hover:border-primary-300 cursor-pointer'
+                            : isSelected
+                              ? 'border-secondary-500 bg-secondary-50 cursor-pointer shadow-md'
+                              : 'border-primary-200 hover:border-secondary-300 hover:bg-white cursor-pointer'
                         }`}
                       >
                         <input
                           type="radio"
                           name="liefertermin"
                           value={termin.name}
-                          checked={formData.liefertermin === termin.name}
+                          checked={isSelected}
                           onChange={(e) => updateField('liefertermin', e.target.value)}
                           className="sr-only"
                           required
                           disabled={isAusverkauft}
                         />
+                        {/* Radio circle indicator */}
                         <span
-                          className={`font-medium ${
+                          className={`flex-shrink-0 w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                            isAusverkauft
+                              ? 'border-primary-300 bg-primary-200'
+                              : isSelected
+                                ? 'border-secondary-500 bg-secondary-500'
+                                : 'border-primary-300 bg-white'
+                          }`}
+                        >
+                          {isSelected && !isAusverkauft && (
+                            <span className="w-2 h-2 rounded-full bg-white" />
+                          )}
+                        </span>
+                        <span
+                          className={`font-medium flex-grow ${
                             isAusverkauft ? 'text-primary-400 line-through' : 'text-primary-800'
                           }`}
                         >
@@ -356,38 +372,58 @@ export default function BestellenPage() {
             {/* Mischpaket */}
             <div className="bg-primary-50 rounded-2xl p-6 md:p-8">
               <h2 className="font-serif text-xl font-bold text-primary-800 mb-2">Mischpaket</h2>
-              {preise && (
-                <p className="text-primary-600 mb-6">
-                  Preis: CHF {preise.mischpaketProKg.toFixed(2)}/kg
-                </p>
-              )}
+              <p className="text-primary-600 mb-6">
+                Wählen Sie eine Paketgrösse aus:
+                {preise && ` (CHF ${preise.mischpaketProKg.toFixed(2)}/kg)`}
+              </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                {['10', '15', '20'].map((size) => (
-                  <label
-                    key={size}
-                    className={`flex flex-col items-center p-4 rounded-xl border-2 cursor-pointer transition-colors ${
-                      formData.mischpaketGroesse === size
-                        ? 'border-secondary-500 bg-secondary-50'
-                        : 'border-primary-200 hover:border-primary-300'
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="mischpaketGroesse"
-                      value={size}
-                      checked={formData.mischpaketGroesse === size}
-                      onChange={(e) => updateField('mischpaketGroesse', e.target.value)}
-                      className="sr-only"
-                    />
-                    <span className="text-2xl font-bold text-primary-800">{size} kg</span>
-                    {preise && (
-                      <span className="text-secondary-600 font-medium">
-                        CHF {(parseInt(size) * preise.mischpaketProKg).toFixed(0)}
-                      </span>
-                    )}
-                  </label>
-                ))}
+                {['10', '15', '20'].map((size) => {
+                  const isSelected = formData.mischpaketGroesse === size
+                  return (
+                    <label
+                      key={size}
+                      className={`relative flex flex-col items-center p-5 rounded-xl border-2 cursor-pointer transition-all ${
+                        isSelected
+                          ? 'border-secondary-500 bg-secondary-50 shadow-md'
+                          : 'border-primary-200 hover:border-secondary-300 hover:bg-white'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="mischpaketGroesse"
+                        value={size}
+                        checked={isSelected}
+                        onChange={(e) => updateField('mischpaketGroesse', e.target.value)}
+                        className="sr-only"
+                      />
+                      {/* Checkmark when selected */}
+                      {isSelected && (
+                        <span className="absolute top-2 right-2 w-6 h-6 bg-secondary-500 rounded-full flex items-center justify-center">
+                          <svg
+                            className="w-4 h-4 text-white"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={3}
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                        </span>
+                      )}
+                      <span className="text-2xl font-bold text-primary-800">{size} kg</span>
+                      {preise && (
+                        <span className="text-secondary-600 font-medium">
+                          CHF {(parseInt(size) * preise.mischpaketProKg).toFixed(0)}
+                        </span>
+                      )}
+                    </label>
+                  )
+                })}
               </div>
 
               {formData.mischpaketGroesse && (
