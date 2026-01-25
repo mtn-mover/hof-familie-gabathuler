@@ -17,15 +17,24 @@ export default function ContactPage() {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Simulate form submission - replace with actual API call
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
 
-    // For now, just show success message
-    setSubmitStatus('success')
+      if (res.ok) {
+        setSubmitStatus('success')
+        setFormData({ name: '', email: '', phone: '', message: '' })
+      } else {
+        setSubmitStatus('error')
+      }
+    } catch {
+      setSubmitStatus('error')
+    }
+
     setIsSubmitting(false)
-
-    // Reset form after success
-    setFormData({ name: '', email: '', phone: '', message: '' })
 
     // Reset status after 5 seconds
     setTimeout(() => setSubmitStatus('idle'), 5000)
