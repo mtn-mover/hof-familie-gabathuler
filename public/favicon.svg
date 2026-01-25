@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <circle cx="16" cy="16" r="16" fill="#2f6f51"/>
+  <path
+    fill="none"
+    stroke="white"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="1.5"
+    d="M8 16l1.33-1.33m0 0L16 8l6.67 6.67M9.33 14.67v6.66a.67.67 0 00.67.67h2m6.67-7.33l1.33 1.33m-1.33-1.33v6.66a.67.67 0 01-.67.67h-2m-4 0a.67.67 0 00.67-.67v-2.66a.67.67 0 01.66-.67h1.34a.67.67 0 01.66.67v2.66a.67.67 0 00.67.67m-4 0h4"
+    transform="translate(4, 4)"
+  />
+</svg>
