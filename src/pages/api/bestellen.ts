@@ -10,6 +10,7 @@ export type Bestellung = {
   plzOrt: string
   telefon: string
   email: string
+  mitteilung?: string
 
   // Order details
   liefertermin: string
@@ -82,6 +83,13 @@ EINZELBESTELLUNGEN:
 `
       })
     }
+  }
+
+  if (bestellung.mitteilung) {
+    text += `
+MITTEILUNG DES KUNDEN:
+${bestellung.mitteilung}
+`
   }
 
   text += `

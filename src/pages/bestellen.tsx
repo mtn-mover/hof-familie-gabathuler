@@ -65,6 +65,7 @@ export default function BestellenPage() {
     plzOrt: '',
     telefon: '',
     email: '',
+    mitteilung: '',
     liefertermin: '',
     mischpaketGroesse: '',
     portionsgroesse: '',
@@ -156,6 +157,7 @@ export default function BestellenPage() {
           plzOrt: '',
           telefon: '',
           email: '',
+          mitteilung: '',
           liefertermin: '',
           mischpaketGroesse: '',
           portionsgroesse: '',
@@ -756,6 +758,18 @@ export default function BestellenPage() {
                     value={formData.telefon}
                     onChange={(e) => updateField('telefon', e.target.value)}
                     className="w-full px-4 py-3 rounded-xl border border-primary-200 focus:outline-none focus:ring-2 focus:ring-secondary-500"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-primary-700 mb-2">
+                    Mitteilung (optional)
+                  </label>
+                  <textarea
+                    value={formData.mitteilung || ''}
+                    onChange={(e) => updateField('mitteilung', e.target.value)}
+                    placeholder="Haben Sie besondere Wünsche oder Anmerkungen?"
+                    rows={3}
+                    className="w-full px-4 py-3 rounded-xl border border-primary-200 focus:outline-none focus:ring-2 focus:ring-secondary-500 resize-none"
                   />
                 </div>
               </div>
