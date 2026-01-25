@@ -40,6 +40,12 @@ const portionsgroessen = [
 
 const bratenOptionen = ['Braten', 'Plätzli für Fleischvögel', 'Saftplätzli']
 
+type EinzelItem = {
+  fleischstueck: string
+  portionen: number
+  portionsgroesse: string
+}
+
 export default function BestellenPage() {
   const [termine, setTermine] = useState<Termin[]>([])
   const [preise, setPreise] = useState<Preise | null>(null)
@@ -47,6 +53,9 @@ export default function BestellenPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
+
+  // Einzelbestellungen state - dynamic list
+  const [einzelItems, setEinzelItems] = useState<EinzelItem[]>([])
 
   // Form state
   const [formData, setFormData] = useState<Bestellung>({
@@ -60,11 +69,7 @@ export default function BestellenPage() {
     portionsgroesse: '',
     mehrGehacktes: false,
     bratenAufteilung: [],
-    einzelbestellungen: fleischstuecke.map((f) => ({
-      fleischstueck: f.label,
-      portionen: 0,
-      portionsgroesse: 'mittel (ca. 250g)',
-    })),
+    einzelbestellungen: [],
   })
 
   // Load termine and preise
@@ -88,6 +93,14 @@ export default function BestellenPage() {
     loadData()
   }, [])
 
+  // Sync einzelItems to formData
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      einzelbestellungen: einzelItems.filter((item) => item.portionen > 0),
+    }))
+  }, [einzelItems])
+
   // Calculate totals
   const totals = useMemo(() => {
     if (!preise) return { mischpaket: 0, einzelstuecke: 0, gesamt: 0 }
@@ -98,16 +111,17 @@ export default function BestellenPage() {
 
     // Einzelstücke total
     let einzelTotal = 0
-    formData.einzelbestellungen?.forEach((item, index) => {
+    einzelItems.forEach((item) => {
       if (item.portionen > 0) {
-        const pricePerKg =
-          preise.einzelpreise[fleischstuecke[index].key as keyof typeof preise.einzelpreise] || 0
-        const selectedSize = portionsgroessen.find(
-          (p) => p.label === item.portionsgroesse
-        )
-        const grammPerPortion = selectedSize?.gramm || 250
-        const totalKg = (item.portionen * grammPerPortion) / 1000
-        einzelTotal += totalKg * pricePerKg
+        const fleischItem = fleischstuecke.find((f) => f.label === item.fleischstueck)
+        if (fleischItem) {
+          const pricePerKg =
+            preise.einzelpreise[fleischItem.key as keyof typeof preise.einzelpreise] || 0
+          const selectedSize = portionsgroessen.find((p) => p.label === item.portionsgroesse)
+          const grammPerPortion = selectedSize?.gramm || 250
+          const totalKg = (item.portionen * grammPerPortion) / 1000
+          einzelTotal += totalKg * pricePerKg
+        }
       }
     })
 
@@ -116,7 +130,7 @@ export default function BestellenPage() {
       einzelstuecke: einzelTotal,
       gesamt: mischpaketTotal + einzelTotal,
     }
-  }, [formData, preise])
+  }, [formData.mischpaketGroesse, einzelItems, preise])
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -136,7 +150,6 @@ export default function BestellenPage() {
         setSubmitStatus('success')
         // Reset form
         setFormData({
-          ...formData,
           name: '',
           adresse: '',
           plzOrt: '',
@@ -147,12 +160,9 @@ export default function BestellenPage() {
           portionsgroesse: '',
           mehrGehacktes: false,
           bratenAufteilung: [],
-          einzelbestellungen: fleischstuecke.map((f) => ({
-            fleischstueck: f.label,
-            portionen: 0,
-            portionsgroesse: 'mittel (ca. 250g)',
-          })),
+          einzelbestellungen: [],
         })
+        setEinzelItems([])
       } else {
         setSubmitStatus('error')
         setErrorMessage(data.error || 'Ein Fehler ist aufgetreten')
@@ -181,14 +191,36 @@ export default function BestellenPage() {
     }
   }
 
-  const updateEinzelbestellung = (
-    index: number,
-    field: 'portionen' | 'portionsgroesse',
-    value: number | string
-  ) => {
-    const updated = [...(formData.einzelbestellungen || [])]
+  // Einzelbestellung handlers
+  const addEinzelItem = () => {
+    setEinzelItems([
+      ...einzelItems,
+      { fleischstueck: '', portionen: 1, portionsgroesse: 'mittel (ca. 250g)' },
+    ])
+  }
+
+  const updateEinzelItem = (index: number, field: keyof EinzelItem, value: string | number) => {
+    const updated = [...einzelItems]
     updated[index] = { ...updated[index], [field]: value }
-    setFormData({ ...formData, einzelbestellungen: updated })
+    setEinzelItems(updated)
+  }
+
+  const removeEinzelItem = (index: number) => {
+    setEinzelItems(einzelItems.filter((_, i) => i !== index))
+  }
+
+  const getItemPrice = (fleischstueck: string) => {
+    if (!preise) return 0
+    const fleischItem = fleischstuecke.find((f) => f.label === fleischstueck)
+    if (!fleischItem) return 0
+    return preise.einzelpreise[fleischItem.key as keyof typeof preise.einzelpreise] || 0
+  }
+
+  const calculateItemTotal = (item: EinzelItem) => {
+    const pricePerKg = getItemPrice(item.fleischstueck)
+    const selectedSize = portionsgroessen.find((p) => p.label === item.portionsgroesse)
+    const grammPerPortion = selectedSize?.gramm || 250
+    return ((item.portionen * grammPerPortion) / 1000) * pricePerKg
   }
 
   if (isLoading) {
@@ -373,43 +405,70 @@ export default function BestellenPage() {
                     </select>
                   </div>
 
-                  {/* Sonderwünsche */}
-                  <div className="space-y-4">
-                    <h4 className="font-medium text-primary-700">Sonderwünsche:</h4>
-                    <label className="flex items-center gap-3 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={formData.mehrGehacktes}
-                        onChange={(e) => updateField('mehrGehacktes', e.target.checked)}
-                        className="w-5 h-5 rounded border-primary-300 text-secondary-500 focus:ring-secondary-500"
-                      />
-                      <span className="text-primary-600">
-                        Anstelle von Siedfleisch mehr Gehacktes
-                      </span>
-                    </label>
+                  {/* Sonderwünsche - Improved Display */}
+                  <div className="bg-accent-50 border border-accent-200 rounded-xl p-5">
+                    <div className="flex items-center gap-2 mb-4">
+                      <svg
+                        className="w-5 h-5 text-accent-600"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
+                        />
+                      </svg>
+                      <h4 className="font-semibold text-primary-800">Sonderwünsche (optional)</h4>
+                    </div>
 
-                    {/* Braten Aufteilung - Multi-Select */}
-                    <div className="mt-4">
-                      <p className="text-primary-600 mb-3">Braten aufteilen in:</p>
-                      <div className="flex flex-wrap gap-3">
-                        {bratenOptionen.map((option) => (
-                          <label
-                            key={option}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 cursor-pointer transition-colors ${
-                              formData.bratenAufteilung?.includes(option)
-                                ? 'border-secondary-500 bg-secondary-50'
-                                : 'border-primary-200 hover:border-primary-300'
-                            }`}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={formData.bratenAufteilung?.includes(option) || false}
-                              onChange={() => toggleBratenOption(option)}
-                              className="w-4 h-4 rounded border-primary-300 text-secondary-500 focus:ring-secondary-500"
-                            />
-                            <span className="text-primary-700">{option}</span>
-                          </label>
-                        ))}
+                    <div className="space-y-4">
+                      {/* Sonderwunsch 1: Mehr Gehacktes */}
+                      <label className="flex items-start gap-3 p-3 bg-white rounded-lg cursor-pointer hover:bg-primary-50 transition-colors">
+                        <input
+                          type="checkbox"
+                          checked={formData.mehrGehacktes}
+                          onChange={(e) => updateField('mehrGehacktes', e.target.checked)}
+                          className="w-5 h-5 mt-0.5 rounded border-primary-300 text-secondary-500 focus:ring-secondary-500"
+                        />
+                        <div>
+                          <span className="font-medium text-primary-800">Mehr Gehacktes</span>
+                          <p className="text-sm text-primary-500">
+                            Anstelle von Siedfleisch mehr Gehacktes
+                          </p>
+                        </div>
+                      </label>
+
+                      {/* Sonderwunsch 2: Braten aufteilen */}
+                      <div className="p-3 bg-white rounded-lg">
+                        <div className="mb-3">
+                          <span className="font-medium text-primary-800">Braten aufteilen</span>
+                          <p className="text-sm text-primary-500">
+                            Wählen Sie, wie der Braten aufgeteilt werden soll
+                          </p>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {bratenOptionen.map((option) => (
+                            <label
+                              key={option}
+                              className={`flex items-center gap-2 px-3 py-2 rounded-lg border cursor-pointer transition-colors ${
+                                formData.bratenAufteilung?.includes(option)
+                                  ? 'border-secondary-500 bg-secondary-50 text-secondary-700'
+                                  : 'border-primary-200 hover:border-primary-300 text-primary-600'
+                              }`}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={formData.bratenAufteilung?.includes(option) || false}
+                                onChange={() => toggleBratenOption(option)}
+                                className="w-4 h-4 rounded border-primary-300 text-secondary-500 focus:ring-secondary-500"
+                              />
+                              <span className="text-sm">{option}</span>
+                            </label>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -417,7 +476,7 @@ export default function BestellenPage() {
               )}
             </div>
 
-            {/* Einzelbestellungen */}
+            {/* Einzelbestellungen - New Dropdown-based Design */}
             <div className="bg-primary-50 rounded-2xl p-6 md:p-8">
               <h2 className="font-serif text-xl font-bold text-primary-800 mb-2">
                 Einzelne Fleischstücke (optional)
@@ -426,80 +485,128 @@ export default function BestellenPage() {
                 Zusätzlich oder anstelle eines Mischpakets
               </p>
 
-              <div className="space-y-4">
-                {formData.einzelbestellungen?.map((item, index) => {
-                  const pricePerKg = preise
-                    ? preise.einzelpreise[
-                        fleischstuecke[index].key as keyof typeof preise.einzelpreise
-                      ]
-                    : 0
-                  const selectedSize = portionsgroessen.find(
-                    (p) => p.label === item.portionsgroesse
-                  )
-                  const grammPerPortion = selectedSize?.gramm || 250
-                  const itemTotal =
-                    item.portionen > 0
-                      ? ((item.portionen * grammPerPortion) / 1000) * pricePerKg
-                      : 0
+              {/* Added items */}
+              {einzelItems.length > 0 && (
+                <div className="space-y-3 mb-6">
+                  {einzelItems.map((item, index) => {
+                    const itemTotal = item.fleischstueck ? calculateItemTotal(item) : 0
 
-                  return (
-                    <div
-                      key={fleischstuecke[index].key}
-                      className="grid grid-cols-12 gap-4 items-center bg-white rounded-xl p-4"
-                    >
-                      <div className="col-span-12 sm:col-span-3">
-                        <span className="font-medium text-primary-800">{item.fleischstueck}</span>
-                        {preise && (
-                          <span className="text-sm text-primary-500 block">
-                            CHF {pricePerKg?.toFixed(2)}/kg
-                          </span>
-                        )}
+                    return (
+                      <div
+                        key={index}
+                        className="bg-white rounded-xl p-4 border border-primary-100"
+                      >
+                        <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-end">
+                          {/* Fleischstück Dropdown */}
+                          <div className="sm:col-span-4">
+                            <label className="text-xs font-medium text-primary-500 mb-1 block">
+                              Fleischstück
+                            </label>
+                            <select
+                              value={item.fleischstueck}
+                              onChange={(e) =>
+                                updateEinzelItem(index, 'fleischstueck', e.target.value)
+                              }
+                              className="w-full px-3 py-2 rounded-lg border border-primary-200 focus:outline-none focus:ring-2 focus:ring-secondary-500 bg-white"
+                            >
+                              <option value="">Bitte wählen...</option>
+                              {fleischstuecke.map((f) => (
+                                <option key={f.key} value={f.label}>
+                                  {f.label}{' '}
+                                  {preise &&
+                                    `(CHF ${preise.einzelpreise[f.key as keyof typeof preise.einzelpreise]?.toFixed(2)}/kg)`}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
+                          {/* Portionen */}
+                          <div className="sm:col-span-2">
+                            <label className="text-xs font-medium text-primary-500 mb-1 block">
+                              Anzahl
+                            </label>
+                            <input
+                              type="number"
+                              min="1"
+                              value={item.portionen}
+                              onChange={(e) =>
+                                updateEinzelItem(index, 'portionen', parseInt(e.target.value) || 1)
+                              }
+                              className="w-full px-3 py-2 rounded-lg border border-primary-200 focus:outline-none focus:ring-2 focus:ring-secondary-500"
+                            />
+                          </div>
+
+                          {/* Portionsgrösse */}
+                          <div className="sm:col-span-3">
+                            <label className="text-xs font-medium text-primary-500 mb-1 block">
+                              Portionsgrösse
+                            </label>
+                            <select
+                              value={item.portionsgroesse}
+                              onChange={(e) =>
+                                updateEinzelItem(index, 'portionsgroesse', e.target.value)
+                              }
+                              className="w-full px-3 py-2 rounded-lg border border-primary-200 focus:outline-none focus:ring-2 focus:ring-secondary-500 bg-white"
+                            >
+                              {portionsgroessen.map((option) => (
+                                <option key={option.value} value={option.label}>
+                                  {option.label}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
+                          {/* Price & Remove */}
+                          <div className="sm:col-span-3 flex items-center justify-between sm:justify-end gap-3">
+                            {item.fleischstueck && (
+                              <span className="font-semibold text-secondary-600">
+                                CHF {itemTotal.toFixed(2)}
+                              </span>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => removeEinzelItem(index)}
+                              className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                              title="Entfernen"
+                            >
+                              <svg
+                                className="w-5 h-5"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                />
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
                       </div>
-                      <div className="col-span-4 sm:col-span-2">
-                        <label className="text-xs text-primary-500 mb-1 block">Portionen</label>
-                        <input
-                          type="number"
-                          min="0"
-                          value={item.portionen || ''}
-                          onChange={(e) =>
-                            updateEinzelbestellung(
-                              index,
-                              'portionen',
-                              parseInt(e.target.value) || 0
-                            )
-                          }
-                          className="w-full px-3 py-2 rounded-lg border border-primary-200 focus:outline-none focus:ring-2 focus:ring-secondary-500"
-                        />
-                      </div>
-                      <div className="col-span-8 sm:col-span-4">
-                        <label className="text-xs text-primary-500 mb-1 block">
-                          Portionsgrösse
-                        </label>
-                        <select
-                          value={item.portionsgroesse}
-                          onChange={(e) =>
-                            updateEinzelbestellung(index, 'portionsgroesse', e.target.value)
-                          }
-                          className="w-full px-3 py-2 rounded-lg border border-primary-200 focus:outline-none focus:ring-2 focus:ring-secondary-500 bg-white"
-                        >
-                          {portionsgroessen.map((option) => (
-                            <option key={option.value} value={option.label}>
-                              {option.label}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      <div className="col-span-12 sm:col-span-3 text-right">
-                        {item.portionen > 0 && (
-                          <span className="font-semibold text-secondary-600">
-                            CHF {itemTotal.toFixed(2)}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
+                    )
+                  })}
+                </div>
+              )}
+
+              {/* Add Button */}
+              <button
+                type="button"
+                onClick={addEinzelItem}
+                className="flex items-center gap-2 px-4 py-3 bg-white border-2 border-dashed border-primary-300 rounded-xl text-primary-600 hover:border-secondary-400 hover:text-secondary-600 transition-colors w-full justify-center"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>
+                Fleischstück hinzufügen
+              </button>
             </div>
 
             {/* Total */}
@@ -534,7 +641,7 @@ export default function BestellenPage() {
               </div>
             )}
 
-            {/* Kundendaten - Now at the bottom */}
+            {/* Kundendaten */}
             <div className="bg-primary-50 rounded-2xl p-6 md:p-8">
               <h2 className="font-serif text-xl font-bold text-primary-800 mb-6">Ihre Daten</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
