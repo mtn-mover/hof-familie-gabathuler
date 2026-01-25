@@ -20,15 +20,16 @@ const fleischstuecke = [
   { key: 'leber', label: 'Leber' },
 ]
 
-const mischpaketInhalt = [
-  { menge: '1.7 kg', name: 'Gehacktes' },
-  { menge: '1.2 kg', name: 'Geschnetzeltes' },
-  { menge: '1.3 kg', name: 'Siedfleisch' },
-  { menge: '1.8 kg', name: 'Voressen' },
-  { menge: '2.0 kg', name: 'Braten' },
-  { menge: '0.8 kg', name: 'Plätzli' },
-  { menge: '0.6 kg', name: 'Steak' },
-  { menge: '0.6 kg', name: 'Huft/Filet' },
+// Base amounts for 10kg package (in kg)
+const mischpaketInhalt10kg = [
+  { kg: 1.7, name: 'Gehacktes' },
+  { kg: 1.2, name: 'Geschnetzeltes' },
+  { kg: 1.3, name: 'Siedfleisch' },
+  { kg: 1.8, name: 'Voressen' },
+  { kg: 2.0, name: 'Braten' },
+  { kg: 0.8, name: 'Plätzli' },
+  { kg: 0.6, name: 'Steak' },
+  { kg: 0.6, name: 'Huft/Filet' },
 ]
 
 const portionsgroessen = [
@@ -374,15 +375,21 @@ export default function BestellenPage() {
 
               {formData.mischpaketGroesse && (
                 <>
-                  {/* Inhalt */}
+                  {/* Inhalt - Dynamic based on package size */}
                   <div className="bg-white rounded-xl p-4 mb-6">
-                    <h4 className="font-medium text-primary-700 mb-3">Inhalt 10kg-Paket (ca.):</h4>
+                    <h4 className="font-medium text-primary-700 mb-3">
+                      Inhalt {formData.mischpaketGroesse}kg-Paket (ca.):
+                    </h4>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm text-primary-600">
-                      {mischpaketInhalt.map((item) => (
-                        <div key={item.name}>
-                          <span className="font-medium">{item.menge}</span> {item.name}
-                        </div>
-                      ))}
+                      {mischpaketInhalt10kg.map((item) => {
+                        const multiplier = parseInt(formData.mischpaketGroesse || '10') / 10
+                        const amount = (item.kg * multiplier).toFixed(1)
+                        return (
+                          <div key={item.name}>
+                            <span className="font-medium">{amount} kg</span> {item.name}
+                          </div>
+                        )
+                      })}
                     </div>
                   </div>
 
