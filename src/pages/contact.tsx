@@ -2,8 +2,14 @@ import { useState, FormEvent } from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import Layout from '@/components/Layout'
+import {
+  ProtectedEmailLink,
+  ProtectedPhoneLink,
+  useProtectedPhone,
+} from '@/components/ProtectedContact'
 
 export default function ContactPage() {
+  const { phone, phoneLink } = useProtectedPhone()
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -269,12 +275,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h3 className="font-semibold text-primary-800 mb-1">Telefon</h3>
-                      <a
-                        href="tel:+41813022319"
-                        className="text-secondary-600 hover:text-secondary-700 transition-colors text-lg font-medium"
-                      >
-                        081 302 23 19
-                      </a>
+                      <ProtectedPhoneLink className="text-secondary-600 hover:text-secondary-700 transition-colors text-lg font-medium" />
                       <p className="text-sm text-primary-500 mt-1">
                         Rufen Sie uns an für Bestellungen
                       </p>
@@ -292,12 +293,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h3 className="font-semibold text-primary-800 mb-1">E-Mail</h3>
-                      <a
-                        href="mailto:jogari@outlook.ch"
-                        className="text-secondary-600 hover:text-secondary-700 transition-colors"
-                      >
-                        jogari@outlook.ch
-                      </a>
+                      <ProtectedEmailLink className="text-secondary-600 hover:text-secondary-700 transition-colors" />
                       <p className="text-sm text-primary-500 mt-1">
                         Schreiben Sie uns jederzeit
                       </p>
@@ -392,15 +388,17 @@ export default function ContactPage() {
                 Rufen Sie uns an - wir beraten Sie gerne persönlich.
               </p>
             </div>
-            <a
-              href="tel:+41813022319"
-              className="inline-flex items-center gap-3 bg-white text-secondary-600 font-semibold px-8 py-4 rounded-full hover:bg-primary-50 transition-all duration-300 hover:shadow-lg"
-            >
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-              </svg>
-              081 302 23 19
-            </a>
+            {phoneLink && (
+              <a
+                href={`tel:${phoneLink}`}
+                className="inline-flex items-center gap-3 bg-white text-secondary-600 font-semibold px-8 py-4 rounded-full hover:bg-primary-50 transition-all duration-300 hover:shadow-lg"
+              >
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                </svg>
+                {phone}
+              </a>
+            )}
           </div>
         </div>
       </section>
