@@ -349,29 +349,16 @@ export default function ContactPage() {
             transition={{ duration: 0.6 }}
             className="rounded-2xl overflow-hidden shadow-lg"
           >
-            {/* Google Maps Embed - Replace with actual embed code */}
-            <div className="aspect-[21/9] bg-gradient-to-br from-secondary-100 to-secondary-200 flex items-center justify-center">
-              <div className="text-center p-8">
-                <svg className="w-16 h-16 text-secondary-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                <h3 className="font-serif text-2xl font-semibold text-secondary-700 mb-2">
-                  St. Luzi 15, 7306 Fläsch
-                </h3>
-                <p className="text-secondary-600 mb-6">
-                  Im malerischen Bündner Rheintal
-                </p>
-                <a
-                  href="https://maps.google.com/?q=St.+Luzi+15,+7306+Fläsch,+Schweiz"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-primary"
-                >
-                  Route in Google Maps
-                </a>
-              </div>
-            </div>
+            <iframe
+              src="https://maps.google.com/maps?q=St.+Luzi+15,+7306+Fl%C3%A4sch,+Schweiz&t=&z=15&ie=UTF8&iwloc=&output=embed"
+              width="100%"
+              height="100%"
+              style={{ border: 0, minHeight: '400px' }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Standort Hof Familie Gabathuler, St. Luzi 15, 7306 Fläsch"
+            />
           </motion.div>
         </div>
       </section>
