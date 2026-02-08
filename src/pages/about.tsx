@@ -367,6 +367,47 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Philosophy Section */}
+      <section className="section bg-primary-50">
+        <div className="container-custom">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <span className="inline-block text-secondary-600 font-medium text-sm tracking-wider uppercase mb-4">
+              Wofür wir stehen
+            </span>
+            <h2 className="section-title">Unsere Philosophie</h2>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {philosophyItems.map((item, index) => (
+              <motion.div
+                key={item.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="card text-center group"
+              >
+                <div className="w-16 h-16 bg-secondary-50 rounded-xl flex items-center justify-center mx-auto mb-5 text-secondary-600 group-hover:bg-secondary-100 transition-colors">
+                  {item.icon}
+                </div>
+                <h3 className="font-serif text-lg font-semibold text-primary-800 mb-3">
+                  {item.title}
+                </h3>
+                <p className="text-sm text-primary-600 leading-relaxed">
+                  {item.description}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Farm Gallery Section */}
       <section className="section bg-white">
         <div className="container-custom">
@@ -412,47 +453,6 @@ export default function AboutPage() {
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-primary-900/0 group-hover:bg-primary-900/30 transition-colors duration-300" />
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Philosophy Section */}
-      <section className="section bg-primary-50">
-        <div className="container-custom">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-          >
-            <span className="inline-block text-secondary-600 font-medium text-sm tracking-wider uppercase mb-4">
-              Wofür wir stehen
-            </span>
-            <h2 className="section-title">Unsere Philosophie</h2>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {philosophyItems.map((item, index) => (
-              <motion.div
-                key={item.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="card text-center group"
-              >
-                <div className="w-16 h-16 bg-secondary-50 rounded-xl flex items-center justify-center mx-auto mb-5 text-secondary-600 group-hover:bg-secondary-100 transition-colors">
-                  {item.icon}
-                </div>
-                <h3 className="font-serif text-lg font-semibold text-primary-800 mb-3">
-                  {item.title}
-                </h3>
-                <p className="text-sm text-primary-600 leading-relaxed">
-                  {item.description}
-                </p>
               </motion.div>
             ))}
           </div>
