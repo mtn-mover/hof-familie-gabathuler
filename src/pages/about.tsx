@@ -164,7 +164,7 @@ export default function AboutPage() {
       </section>
 
       {/* Our Farm Section */}
-      <section className="section bg-primary-50">
+      <section id="mutterkuhhaltung" className="section bg-primary-50 scroll-mt-20">
         <div className="container-custom">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Content */}
@@ -255,7 +255,7 @@ export default function AboutPage() {
       </section>
 
       {/* Ackerbau Section */}
-      <section className="section bg-white">
+      <section id="ackerbau" className="section bg-white scroll-mt-20">
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

@@ -35,15 +35,15 @@ const features = [
     icon: <MutterkuhIcon />,
     title: 'Mutterkuhhaltung',
     description: 'Unsere Tiere leben in artgerechter Mutterkuhhaltung. Die Kälber wachsen bei ihren Müttern auf - natürlich und stressfrei.',
-    href: '/about',
+    href: '/about#mutterkuhhaltung',
     linkText: 'Mehr erfahren',
   },
   {
     icon: <QualitaetIcon />,
     title: 'Frische Qualität',
     description: 'Höchste Qualität durch traditionelle Landwirtschaft und naturnahe Produktion.',
-    href: '/products',
-    linkText: 'Unsere Produkte',
+    href: '/about#ackerbau',
+    linkText: 'Unsere Kulturen',
   },
 ]
 
