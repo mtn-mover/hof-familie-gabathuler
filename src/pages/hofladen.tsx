@@ -1,7 +1,9 @@
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
 import Layout from '@/components/Layout'
+import type { SaisonalesProdukt } from './api/saisonales'
 
 const offerings = [
   {
@@ -63,6 +65,17 @@ const hofladenImages = [
 ]
 
 export default function HofladenPage() {
+  const [saisonales, setSaisonales] = useState<SaisonalesProdukt[]>([])
+
+  useEffect(() => {
+    fetch('/api/saisonales')
+      .then((res) => res.json())
+      .then((data) => setSaisonales(data.saisonales || []))
+      .catch(() => {})
+  }, [])
+
+  const verfuegbareProdukte = saisonales.filter((p) => p.verfuegbar)
+
   return (
     <Layout
       title="Hofladen"
@@ -187,6 +200,70 @@ export default function HofladenPage() {
 
         </div>
       </section>
+
+      {/* Saisonale Produkte Section */}
+      {verfuegbareProdukte.length > 0 && (
+        <section className="section bg-primary-50">
+          <div className="container-custom">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="text-center mb-12"
+            >
+              <span className="inline-block text-secondary-600 font-medium text-sm tracking-wider uppercase mb-4">
+                Saisonales
+              </span>
+              <h2 className="section-title">Aktuell im Angebot</h2>
+            </motion.div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {verfuegbareProdukte.map((produkt, index) => (
+                <motion.div
+                  key={produkt.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="bg-white rounded-xl p-6 shadow-md"
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 bg-secondary-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <svg
+                        className="w-5 h-5 text-secondary-600"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="font-serif text-lg font-semibold text-primary-800 mb-1">
+                        {produkt.name}
+                      </h3>
+                      {produkt.beschreibung && (
+                        <p className="text-primary-600 text-sm leading-relaxed">
+                          {produkt.beschreibung}
+                        </p>
+                      )}
+                      <span className="inline-block mt-2 text-xs font-medium text-secondary-700 bg-secondary-50 px-2 py-1 rounded-full">
+                        Verfügbar
+                      </span>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Gallery Section */}
       <section className="section bg-primary-50">

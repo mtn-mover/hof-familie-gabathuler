@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import type { Termin } from './api/termine'
 import type { Preise } from './api/preise'
+import type { SaisonalesProdukt } from './api/saisonales'
 
 const fleischstueckeLabels: Record<string, string> = {
   siedfleisch: 'Siedfleisch',
@@ -26,6 +27,7 @@ export default function AdminPage() {
 
   const [termine, setTermine] = useState<Termin[]>([])
   const [preise, setPreise] = useState<Preise | null>(null)
+  const [saisonales, setSaisonales] = useState<SaisonalesProdukt[]>([])
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
 
   // Load data when authenticated
@@ -37,15 +39,18 @@ export default function AdminPage() {
 
   const loadData = async () => {
     try {
-      const [termineRes, preiseRes] = await Promise.all([
+      const [termineRes, preiseRes, saisonalesRes] = await Promise.all([
         fetch('/api/termine'),
         fetch('/api/preise'),
+        fetch('/api/saisonales'),
       ])
       const termineData = await termineRes.json()
       const preiseData = await preiseRes.json()
+      const saisonalesData = await saisonalesRes.json()
 
       setTermine(termineData.termine || [])
       setPreise(preiseData.preise || null)
+      setSaisonales(saisonalesData.saisonales || [])
     } catch (error) {
       console.error('Error loading data:', error)
     }
@@ -142,6 +147,47 @@ export default function AdminPage() {
         einzelpreise: { ...preise.einzelpreise, [key]: value },
       })
     }
+  }
+
+  // Saisonales CRUD
+  const saveSaisonales = async () => {
+    setSaveStatus('saving')
+    try {
+      const res = await fetch('/api/saisonales', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password, saisonales }),
+      })
+
+      if (res.ok) {
+        setSaveStatus('saved')
+        setTimeout(() => setSaveStatus('idle'), 2000)
+      } else {
+        setSaveStatus('error')
+      }
+    } catch (error) {
+      setSaveStatus('error')
+    }
+  }
+
+  const addSaisonalesProdukt = () => {
+    const newId = String(Date.now())
+    setSaisonales([
+      ...saisonales,
+      { id: newId, name: 'Neues Produkt', beschreibung: '', verfuegbar: true },
+    ])
+  }
+
+  const removeSaisonalesProdukt = (id: string) => {
+    setSaisonales(saisonales.filter((p) => p.id !== id))
+  }
+
+  const updateSaisonalesProdukt = (
+    id: string,
+    field: keyof SaisonalesProdukt,
+    value: string | boolean,
+  ) => {
+    setSaisonales(saisonales.map((p) => (p.id === id ? { ...p, [field]: value } : p)))
   }
 
   // Login form
@@ -357,6 +403,103 @@ export default function AdminPage() {
               </div>
             </section>
           )}
+
+          {/* Saisonale Produkte Section */}
+          <section className="bg-white rounded-2xl shadow-lg p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="font-serif text-xl font-bold text-primary-800">
+                Saisonale Produkte
+              </h2>
+              <div className="flex gap-2">
+                <button
+                  onClick={addSaisonalesProdukt}
+                  className="text-sm bg-secondary-100 text-secondary-700 px-4 py-2 rounded-lg hover:bg-secondary-200"
+                >
+                  + Produkt hinzufügen
+                </button>
+                <button
+                  onClick={saveSaisonales}
+                  className="text-sm bg-secondary-500 text-white px-4 py-2 rounded-lg hover:bg-secondary-600"
+                >
+                  Speichern
+                </button>
+              </div>
+            </div>
+
+            {saisonales.length === 0 ? (
+              <p className="text-primary-500 text-center py-8">
+                Noch keine saisonalen Produkte erfasst. Klicken Sie auf &quot;+ Produkt
+                hinzufügen&quot;.
+              </p>
+            ) : (
+              <div className="space-y-4">
+                {saisonales.map((produkt) => (
+                  <div
+                    key={produkt.id}
+                    className="p-4 bg-primary-50 rounded-xl space-y-3"
+                  >
+                    <div className="flex items-center gap-4">
+                      <input
+                        type="text"
+                        value={produkt.name}
+                        onChange={(e) =>
+                          updateSaisonalesProdukt(produkt.id, 'name', e.target.value)
+                        }
+                        placeholder="Produktname"
+                        className="flex-1 px-3 py-2 rounded-lg border border-primary-200 focus:outline-none focus:ring-2 focus:ring-secondary-500"
+                      />
+                      <select
+                        value={produkt.verfuegbar ? 'verfuegbar' : 'nicht_verfuegbar'}
+                        onChange={(e) =>
+                          updateSaisonalesProdukt(
+                            produkt.id,
+                            'verfuegbar',
+                            e.target.value === 'verfuegbar',
+                          )
+                        }
+                        className={`px-4 py-2 rounded-lg font-medium ${
+                          produkt.verfuegbar
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-red-100 text-red-700'
+                        }`}
+                      >
+                        <option value="verfuegbar">Verfügbar</option>
+                        <option value="nicht_verfuegbar">Nicht verfügbar</option>
+                      </select>
+                      <button
+                        onClick={() => removeSaisonalesProdukt(produkt.id)}
+                        className="text-red-500 hover:text-red-700 p-2"
+                        title="Löschen"
+                      >
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                    <input
+                      type="text"
+                      value={produkt.beschreibung}
+                      onChange={(e) =>
+                        updateSaisonalesProdukt(produkt.id, 'beschreibung', e.target.value)
+                      }
+                      placeholder="Beschreibung (z.B. Frische Kartoffeln aus eigenem Anbau)"
+                      className="w-full px-3 py-2 rounded-lg border border-primary-200 focus:outline-none focus:ring-2 focus:ring-secondary-500 text-sm"
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
         </main>
       </div>
     </>
