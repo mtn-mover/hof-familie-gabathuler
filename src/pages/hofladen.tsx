@@ -218,7 +218,7 @@ export default function HofladenPage() {
               <h2 className="section-title">Aktuell im Angebot</h2>
             </motion.div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="flex flex-wrap justify-center gap-6">
               {verfuegbareProdukte.map((produkt, index) => (
                 <motion.div
                   key={produkt.id}
@@ -226,7 +226,7 @@ export default function HofladenPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
-                  className="bg-white rounded-xl p-6 shadow-md"
+                  className="bg-white rounded-xl p-6 shadow-md w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]"
                 >
                   <div className="flex items-start gap-4">
                     <div className="w-10 h-10 bg-secondary-50 rounded-lg flex items-center justify-center flex-shrink-0">
