@@ -270,26 +270,36 @@ export default function AboutPage() {
             <h2 className="section-title">Unsere Kulturen</h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="card group"
+              className="group rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-xl transition-shadow duration-300"
             >
-              <div className="w-14 h-14 bg-secondary-50 rounded-xl flex items-center justify-center mb-5 text-secondary-600 group-hover:bg-secondary-100 transition-colors">
-                <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707" />
-                </svg>
+              <div className="aspect-[4/3] relative overflow-hidden">
+                <Image
+                  src="/images/farm/Weizen1.JPG"
+                  alt="Weizenfeld in Fläsch"
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  quality={85}
+                  loading="lazy"
+                />
+                <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-secondary-700 text-xs font-semibold px-3 py-1 rounded-full">
+                  2–3 Hektar
+                </div>
               </div>
-              <h3 className="font-serif text-lg font-semibold text-primary-800 mb-2">
-                IP Suisse Weizen
-              </h3>
-              <p className="text-sm text-secondary-600 font-medium mb-2">2–3 Hektar</p>
-              <p className="text-sm text-primary-600 leading-relaxed">
-                Anbau von Brotweizen mit gänzlichem Verzicht auf Pflanzenschutzmittel – pestizidfreie Produktion.
-              </p>
+              <div className="p-6">
+                <h3 className="font-serif text-lg font-semibold text-primary-800 mb-2">
+                  IP Suisse Weizen
+                </h3>
+                <p className="text-sm text-primary-600 leading-relaxed">
+                  Anbau von Brotweizen mit gänzlichem Verzicht auf Pflanzenschutzmittel – pestizidfreie Produktion.
+                </p>
+              </div>
             </motion.div>
 
             <motion.div
@@ -297,20 +307,30 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="card group"
+              className="group rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-xl transition-shadow duration-300"
             >
-              <div className="w-14 h-14 bg-secondary-50 rounded-xl flex items-center justify-center mb-5 text-secondary-600 group-hover:bg-secondary-100 transition-colors">
-                <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
-                </svg>
+              <div className="aspect-[4/3] relative overflow-hidden">
+                <Image
+                  src="/images/farm/Maisfeld.jpg"
+                  alt="Maisfeld in der Bündner Herrschaft"
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  quality={85}
+                  loading="lazy"
+                />
+                <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-secondary-700 text-xs font-semibold px-3 py-1 rounded-full">
+                  2 Hektar
+                </div>
               </div>
-              <h3 className="font-serif text-lg font-semibold text-primary-800 mb-2">
-                Maisanbau
-              </h3>
-              <p className="text-sm text-secondary-600 font-medium mb-2">2 Hektar</p>
-              <p className="text-sm text-primary-600 leading-relaxed">
-                Für die Ausmast der männlichen Tiere im Winter. Ein Teil wird stehend ab Feld für Berufskollegen verkauft.
-              </p>
+              <div className="p-6">
+                <h3 className="font-serif text-lg font-semibold text-primary-800 mb-2">
+                  Maisanbau
+                </h3>
+                <p className="text-sm text-primary-600 leading-relaxed">
+                  Für die Ausmast der männlichen Tiere im Winter. Ein Teil wird stehend ab Feld für Berufskollegen verkauft.
+                </p>
+              </div>
             </motion.div>
 
             <motion.div
@@ -318,20 +338,30 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.2 }}
-              className="card group"
+              className="group rounded-2xl overflow-hidden bg-white shadow-md hover:shadow-xl transition-shadow duration-300"
             >
-              <div className="w-14 h-14 bg-secondary-50 rounded-xl flex items-center justify-center mb-5 text-secondary-600 group-hover:bg-secondary-100 transition-colors">
-                <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+              <div className="aspect-[4/3] relative overflow-hidden">
+                <Image
+                  src="/images/farm/Kartoffel Ernte.JPG"
+                  alt="Kartoffelernte auf dem Hof"
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  quality={85}
+                  loading="lazy"
+                />
+                <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-secondary-700 text-xs font-semibold px-3 py-1 rounded-full">
+                  25 Aren
+                </div>
               </div>
-              <h3 className="font-serif text-lg font-semibold text-primary-800 mb-2">
-                Kartoffelanbau
-              </h3>
-              <p className="text-sm text-secondary-600 font-medium mb-2">25 Aren</p>
-              <p className="text-sm text-primary-600 leading-relaxed">
-                Für die eigene Direktvermarktung – frische Kartoffeln direkt ab Hof.
-              </p>
+              <div className="p-6">
+                <h3 className="font-serif text-lg font-semibold text-primary-800 mb-2">
+                  Kartoffelanbau
+                </h3>
+                <p className="text-sm text-primary-600 leading-relaxed">
+                  Für die eigene Direktvermarktung – frische Kartoffeln direkt ab Hof.
+                </p>
+              </div>
             </motion.div>
           </div>
         </div>
