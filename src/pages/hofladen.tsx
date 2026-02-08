@@ -249,8 +249,8 @@ export default function HofladenPage() {
             >
               <div className="aspect-square rounded-2xl overflow-hidden relative group">
                 <Image
-                  src="/images/Feld mit Bergen2.jpg"
-                  alt="Blick auf die Bündner Berge bei Fläsch"
+                  src="/images/hofladen/Hero.jpg"
+                  alt="Unser Hofladen in Fläsch"
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                   sizes="(max-width: 1024px) 100vw, 50vw"
@@ -400,7 +400,7 @@ export default function HofladenPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
-                href="tel:+41813022319"
+                href="tel:+41796400183"
                 className="btn-primary bg-secondary-500 hover:bg-secondary-600"
               >
                 Jetzt anrufen
