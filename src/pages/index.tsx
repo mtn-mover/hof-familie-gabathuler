@@ -95,9 +95,9 @@ export default function Home() {
 
             {/* Subtitle */}
             <p className="text-lg sm:text-xl md:text-2xl text-white/80 max-w-3xl mx-auto leading-relaxed">
-              Frische Produkte aus der Mutterkuhhaltung
+              Frische Produkte direkt von unserem Hof
               <br className="hidden sm:block" />
-              Direkt aus Fläsch, Graubünden
+              aus Fläsch, Graubünden (Bündner Herrschaft)
             </p>
           </motion.div>
         </div>
