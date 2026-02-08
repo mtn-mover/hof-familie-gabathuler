@@ -780,6 +780,9 @@ export default function BestellenPage() {
 
             {/* Submit */}
             <div className="text-center">
+              <p className="text-sm text-primary-500 mb-4">
+                Auslieferung im Umkreis von 20 km – ansonsten Abholung auf dem Betrieb.
+              </p>
               {submitStatus === 'error' && <p className="text-red-500 mb-4">{errorMessage}</p>}
               <button
                 type="submit"
