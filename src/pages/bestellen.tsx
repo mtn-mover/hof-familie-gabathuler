@@ -294,6 +294,9 @@ export default function BestellenPage() {
             <p className="text-white/80 text-lg max-w-2xl mx-auto">
               Frisches Rindfleisch aus Mutterkuhhaltung direkt vom Hof
             </p>
+            <p className="text-white/60 text-sm mt-3 max-w-2xl mx-auto">
+              Auslieferung im Umkreis von 20 km – ansonsten Abholung auf dem Betrieb.
+            </p>
           </motion.div>
         </div>
       </section>

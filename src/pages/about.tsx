@@ -145,16 +145,16 @@ export default function AboutPage() {
                   <svg className="w-5 h-5 text-secondary-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                   </svg>
-                  <a href="tel:+41813022319" className="text-primary-700 hover:text-secondary-600 transition-colors">
-                    081 302 23 19
+                  <a href="tel:+41796400183" className="text-primary-700 hover:text-secondary-600 transition-colors">
+                    079 640 01 83
                   </a>
                 </div>
                 <div className="flex items-center gap-3">
                   <svg className="w-5 h-5 text-secondary-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
-                  <a href="mailto:jogari@outlook.ch" className="text-primary-700 hover:text-secondary-600 transition-colors">
-                    jogari@outlook.ch
+                  <a href="mailto:jann_gaba@hotmail.ch" className="text-primary-700 hover:text-secondary-600 transition-colors">
+                    jann_gaba@hotmail.ch
                   </a>
                 </div>
               </div>
@@ -249,6 +249,89 @@ export default function AboutPage() {
                 />
               </div>
               <div className="absolute -top-6 -left-6 w-24 h-24 bg-accent-100 rounded-xl -z-10" />
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Ackerbau Section */}
+      <section className="section bg-white">
+        <div className="container-custom">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <span className="inline-block text-secondary-600 font-medium text-sm tracking-wider uppercase mb-4">
+              Ackerbau
+            </span>
+            <h2 className="section-title">Unsere Kulturen</h2>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="card group"
+            >
+              <div className="w-14 h-14 bg-secondary-50 rounded-xl flex items-center justify-center mb-5 text-secondary-600 group-hover:bg-secondary-100 transition-colors">
+                <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707" />
+                </svg>
+              </div>
+              <h3 className="font-serif text-lg font-semibold text-primary-800 mb-2">
+                IP Suisse Weizen
+              </h3>
+              <p className="text-sm text-secondary-600 font-medium mb-2">2–3 Hektar</p>
+              <p className="text-sm text-primary-600 leading-relaxed">
+                Anbau von Brotweizen mit gänzlichem Verzicht auf Pflanzenschutzmittel – pestizidfreie Produktion.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="card group"
+            >
+              <div className="w-14 h-14 bg-secondary-50 rounded-xl flex items-center justify-center mb-5 text-secondary-600 group-hover:bg-secondary-100 transition-colors">
+                <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
+                </svg>
+              </div>
+              <h3 className="font-serif text-lg font-semibold text-primary-800 mb-2">
+                Maisanbau
+              </h3>
+              <p className="text-sm text-secondary-600 font-medium mb-2">2 Hektar</p>
+              <p className="text-sm text-primary-600 leading-relaxed">
+                Für die Ausmast der männlichen Tiere im Winter. Ein Teil wird stehend ab Feld für Berufskollegen verkauft.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="card group"
+            >
+              <div className="w-14 h-14 bg-secondary-50 rounded-xl flex items-center justify-center mb-5 text-secondary-600 group-hover:bg-secondary-100 transition-colors">
+                <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 className="font-serif text-lg font-semibold text-primary-800 mb-2">
+                Kartoffelanbau
+              </h3>
+              <p className="text-sm text-secondary-600 font-medium mb-2">25 Aren</p>
+              <p className="text-sm text-primary-600 leading-relaxed">
+                Für die eigene Direktvermarktung – frische Kartoffeln direkt ab Hof.
+              </p>
             </motion.div>
           </div>
         </div>

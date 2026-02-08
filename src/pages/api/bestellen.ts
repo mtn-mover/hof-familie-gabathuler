@@ -121,7 +121,7 @@ export default async function handler(
     // Send email to Gabathuler
     await resend.emails.send({
       from: 'Hof Gabathuler <noreply@resend.dev>',
-      to: 'jogari@outlook.ch',
+      to: 'jann_gaba@hotmail.ch',
       subject: `Neue Bestellung von ${bestellung.name}`,
       text: bestellungText,
     })
@@ -139,8 +139,8 @@ Wir haben Ihre Bestellung erhalten und werden diese prüfen.
 Sie werden von uns kontaktiert, sobald wir Ihre Bestellung bearbeitet haben.
 
 Bei Fragen erreichen Sie uns unter:
-- Telefon: 081 302 23 19
-- E-Mail: jogari@outlook.ch
+- Telefon: 079 640 01 83
+- E-Mail: jann_gaba@hotmail.ch
 
 Freundliche Grüsse
 Familie Gabathuler-Risch
