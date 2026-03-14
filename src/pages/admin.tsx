@@ -197,6 +197,7 @@ export default function AdminPage() {
         <Head>
           <title>Admin | Hof Familie Gabathuler</title>
           <meta name="robots" content="noindex, nofollow" />
+          <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         </Head>
 
         <div className="min-h-screen bg-primary-50 flex items-center justify-center p-4">
@@ -244,6 +245,7 @@ export default function AdminPage() {
       <Head>
         <title>Admin | Hof Familie Gabathuler</title>
         <meta name="robots" content="noindex, nofollow" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
       </Head>
 
       <div className="min-h-screen bg-primary-50">
