@@ -594,9 +594,20 @@ export default function BestellenPage() {
                               type="number"
                               min="1"
                               value={item.portionen}
-                              onChange={(e) =>
-                                updateEinzelItem(index, 'portionen', parseInt(e.target.value) || 1)
-                              }
+                              onFocus={(e) => e.target.select()}
+                              onChange={(e) => {
+                                const val = e.target.value
+                                if (val === '') {
+                                  updateEinzelItem(index, 'portionen', 0)
+                                } else {
+                                  updateEinzelItem(index, 'portionen', parseInt(val) || 1)
+                                }
+                              }}
+                              onBlur={(e) => {
+                                if (!e.target.value || parseInt(e.target.value) < 1) {
+                                  updateEinzelItem(index, 'portionen', 1)
+                                }
+                              }}
                               className="w-full px-3 py-2 rounded-lg border border-primary-200 focus:outline-none focus:ring-2 focus:ring-secondary-500"
                             />
                           </div>
