@@ -120,7 +120,7 @@ export default async function handler(
 
     // Send email to Gabathuler
     await resend.emails.send({
-      from: 'Hof Gabathuler <noreply@resend.dev>',
+      from: 'Hof Gabathuler <noreply@hof-gabathuler.ch>',
       to: 'jann_gaba@hotmail.ch',
       subject: `Neue Bestellung von ${bestellung.name}`,
       text: bestellungText,
@@ -128,7 +128,7 @@ export default async function handler(
 
     // Send confirmation to customer
     await resend.emails.send({
-      from: 'Hof Gabathuler <noreply@resend.dev>',
+      from: 'Hof Gabathuler <noreply@hof-gabathuler.ch>',
       to: bestellung.email,
       subject: 'Ihre Bestellung bei Hof Familie Gabathuler',
       text: `Guten Tag ${bestellung.name},

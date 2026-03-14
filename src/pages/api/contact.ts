@@ -34,7 +34,7 @@ export default async function handler(
   try {
     // Send email to Gabathuler
     await resend.emails.send({
-      from: 'Hof Gabathuler <noreply@resend.dev>',
+      from: 'Hof Gabathuler <noreply@hof-gabathuler.ch>',
       to: 'jann_gaba@hotmail.ch',
       subject: `Kontaktanfrage von ${name}`,
       text: `
@@ -55,7 +55,7 @@ Anfrage eingegangen am: ${new Date().toLocaleString('de-CH')}
 
     // Send confirmation to sender
     await resend.emails.send({
-      from: 'Hof Gabathuler <noreply@resend.dev>',
+      from: 'Hof Gabathuler <noreply@hof-gabathuler.ch>',
       to: email,
       subject: 'Ihre Anfrage bei Hof Familie Gabathuler',
       text: `Guten Tag ${name},
