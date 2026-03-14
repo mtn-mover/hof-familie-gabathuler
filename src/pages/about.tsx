@@ -367,8 +367,58 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Weinbau Section */}
+      <section id="weinbau" className="section bg-primary-50 scroll-mt-20">
+        <div className="container-custom">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            {/* Image */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+              className="relative order-2 lg:order-1"
+            >
+              <div className="aspect-[4/3] rounded-2xl overflow-hidden relative group">
+                <Image
+                  src="/images/farm/Weinbau.jpg"
+                  alt="Rebberge in der Bündner Herrschaft"
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  quality={85}
+                  loading="lazy"
+                />
+              </div>
+              <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-secondary-100 rounded-2xl -z-10" />
+            </motion.div>
+
+            {/* Content */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+              className="order-1 lg:order-2"
+            >
+              <span className="inline-block text-secondary-600 font-medium text-sm tracking-wider uppercase mb-4">
+                Weinbau
+              </span>
+              <h2 className="section-title mb-6">
+                Trauben aus der Bündner Herrschaft
+              </h2>
+              <div className="space-y-4 text-primary-600 leading-relaxed">
+                <p>
+                  Wir produzieren Trauben der Sorten Blauburgunder, Chardonnay und Completer für Winzer aus dem Dorf sowie für die Rutishauser-DiVino SA.
+                </p>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Philosophy Section */}
-      <section className="section bg-primary-50">
+      <section className="section bg-white">
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -409,7 +459,7 @@ export default function AboutPage() {
       </section>
 
       {/* Farm Gallery Section */}
-      <section className="section bg-white">
+      <section className="section bg-primary-50">
         <div className="container-custom">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
