@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 
 // Obfuscated contact data - crawlers can't easily parse this
-const EMAIL_PARTS = ['jann_gaba', 'hotmail', 'ch']
+const EMAIL_PARTS = ['info', 'hof-gabathuler', 'ch']
 const PHONE_PARTS = ['079', '640', '01', '83']
 
 export function useProtectedEmail() {

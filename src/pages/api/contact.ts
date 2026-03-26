@@ -35,7 +35,7 @@ export default async function handler(
     // Send email to Gabathuler
     await resend.emails.send({
       from: 'Hof Gabathuler <noreply@hof-gabathuler.ch>',
-      to: 'jann_gaba@hotmail.ch',
+      to: 'info@hof-gabathuler.ch',
       subject: `Kontaktanfrage von ${name}`,
       text: `
 NEUE KONTAKTANFRAGE - Hof Familie Gabathuler
@@ -66,7 +66,7 @@ Wir haben Ihre Anfrage erhalten und werden uns so bald wie möglich bei Ihnen me
 
 Bei dringenden Fragen erreichen Sie uns unter:
 - Telefon: 079 640 01 83
-- E-Mail: jann_gaba@hotmail.ch
+- E-Mail: info@hof-gabathuler.ch
 
 Freundliche Grüsse
 Familie Gabathuler-Risch

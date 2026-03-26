@@ -121,7 +121,7 @@ export default async function handler(
     // Send email to Gabathuler
     await resend.emails.send({
       from: 'Hof Gabathuler <noreply@hof-gabathuler.ch>',
-      to: 'jann_gaba@hotmail.ch',
+      to: 'info@hof-gabathuler.ch',
       subject: `Neue Bestellung von ${bestellung.name}`,
       text: bestellungText,
     })
@@ -140,7 +140,7 @@ Sie werden von uns kontaktiert, sobald wir Ihre Bestellung bearbeitet haben.
 
 Bei Fragen erreichen Sie uns unter:
 - Telefon: 079 640 01 83
-- E-Mail: jann_gaba@hotmail.ch
+- E-Mail: info@hof-gabathuler.ch
 
 Freundliche Grüsse
 Familie Gabathuler-Risch
