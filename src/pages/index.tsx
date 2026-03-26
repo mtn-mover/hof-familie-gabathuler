@@ -90,7 +90,7 @@ export default function Home() {
             <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
               Willkommen auf dem
               <br />
-              <span className="text-secondary-400">Hof Familie Gabathuler</span>
+              <span className="text-white">Hof Familie Gabathuler</span>
             </h1>
 
             {/* Subtitle */}

@@ -104,7 +104,7 @@ export default function HofladenPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <span className="inline-block text-secondary-400 font-medium text-sm tracking-wider uppercase mb-4">
+            <span className="inline-block text-white font-medium text-sm tracking-wider uppercase mb-4">
               Einkaufen beim Bauern
             </span>
             <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6">
