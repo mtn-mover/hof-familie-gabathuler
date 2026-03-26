@@ -33,10 +33,8 @@ const mischpaketInhalt10kg = [
 ]
 
 const portionsgroessen = [
-  { value: 'klein', label: 'klein (ca. 120g)', gramm: 120 },
-  { value: 'mittel', label: 'mittel (ca. 250g)', gramm: 250 },
-  { value: 'gross', label: 'gross (ca. 500g)', gramm: 500 },
-  { value: 'sehr-gross', label: 'sehr gross (ca. 1kg)', gramm: 1000 },
+  { value: 'mittel', label: 'ca. 250g', gramm: 250 },
+  { value: 'gross', label: 'ca. 500g', gramm: 500 },
 ]
 
 const bratenOptionen = ['Braten', 'Plätzli für Fleischvögel', 'Saftplätzli']
