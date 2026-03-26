@@ -1,7 +1,29 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { Resend } from 'resend'
+import { kv } from '@vercel/kv'
+import type { Preise } from './preise'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
+
+const fleischstuecke = [
+  { key: 'siedfleisch', label: 'Siedfleisch' },
+  { key: 'gehacktes', label: 'Gehacktes' },
+  { key: 'geschnetzeltes', label: 'Geschnetzeltes' },
+  { key: 'voressen', label: 'Voressen' },
+  { key: 'braten', label: 'Braten' },
+  { key: 'fleischvogelPlaetzli', label: 'Fleischvögel Plätzli' },
+  { key: 'saftplaetzli', label: 'Saftplätzli' },
+  { key: 'plaetzli', label: 'Plätzli' },
+  { key: 'steak', label: 'Steak' },
+  { key: 'huft', label: 'Huft' },
+  { key: 'filet', label: 'Filet' },
+  { key: 'leber', label: 'Leber' },
+]
+
+const portionsgroessen = [
+  { value: 'mittel', label: 'ca. 250g (2 Personen pro Pack)', gramm: 250 },
+  { value: 'gross', label: 'ca. 500g (4 Personen pro Pack)', gramm: 500 },
+]
 
 export type Bestellung = {
   // Customer data
@@ -118,12 +140,66 @@ export default async function handler(
   try {
     const bestellungText = formatBestellung(bestellung)
 
+    // Fetch prices for confirmation email
+    let preise = await kv.get<Preise>('preise')
+    if (!preise) {
+      preise = {
+        mischpaketProKg: 29.0,
+        einzelpreise: {
+          siedfleisch: 21.0, gehacktes: 21.0, geschnetzeltes: 35.0,
+          voressen: 25.0, braten: 32.0, fleischvogelPlaetzli: 32.0,
+          saftplaetzli: 34.0, plaetzli: 45.0, steak: 57.0,
+          huft: 65.0, filet: 75.0, leber: 21.0,
+        },
+      }
+    }
+
+    // Calculate prices
+    const mischpaketKg = bestellung.mischpaketGroesse ? parseInt(bestellung.mischpaketGroesse) : 0
+    const mischpaketTotal = mischpaketKg * preise.mischpaketProKg
+
+    let einzelTotal = 0
+    const einzelDetails: string[] = []
+    if (bestellung.einzelbestellungen) {
+      bestellung.einzelbestellungen.forEach((item) => {
+        if (item.portionen > 0) {
+          const fleischItem = fleischstuecke.find((f) => f.label === item.fleischstueck)
+          if (fleischItem) {
+            const pricePerKg = preise!.einzelpreise[fleischItem.key as keyof typeof preise.einzelpreise] || 0
+            const selectedSize = portionsgroessen.find((p) => p.label === item.portionsgroesse)
+            const grammPerPortion = selectedSize?.gramm || 250
+            const totalKg = (item.portionen * grammPerPortion) / 1000
+            const itemTotal = totalKg * pricePerKg
+            einzelTotal += itemTotal
+            einzelDetails.push(`  ${item.fleischstueck}: ${item.portionen} x ${item.portionsgroesse} = ${totalKg.toFixed(1)} kg x CHF ${pricePerKg.toFixed(2)}/kg = CHF ${itemTotal.toFixed(2)}`)
+          }
+        }
+      })
+    }
+
+    const gesamt = mischpaketTotal + einzelTotal
+
+    // Build price summary
+    let preisSummary = `
+PREISÜBERSICHT:
+`
+    if (mischpaketKg > 0) {
+      preisSummary += `  Mischpaket ${mischpaketKg} kg x CHF ${preise.mischpaketProKg.toFixed(2)}/kg = CHF ${mischpaketTotal.toFixed(2)}
+`
+    }
+    if (einzelDetails.length > 0) {
+      preisSummary += einzelDetails.join('\n') + '\n'
+    }
+    preisSummary += `
+  TOTAL: CHF ${gesamt.toFixed(2)}
+`
+
     // Send email to Gabathuler
     await resend.emails.send({
       from: 'Hof Gabathuler <noreply@hof-gabathuler.ch>',
       to: 'info@hof-gabathuler.ch',
       subject: `Neue Bestellung von ${bestellung.name}`,
-      text: bestellungText,
+      text: bestellungText + preisSummary,
     })
 
     // Send confirmation to customer
@@ -148,6 +224,7 @@ Familie Gabathuler-Risch
 ---
 Ihre Bestellung:
 ${bestellungText}
+${preisSummary}
 `,
     })
 
