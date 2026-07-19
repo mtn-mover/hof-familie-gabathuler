@@ -1,11 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { isAdminAuthorized, rateLimit } from '@/lib/apiHelpers'
 
 type AuthResponse = {
   success: boolean
   message?: string
 }
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<AuthResponse>
 ) {
@@ -13,15 +14,13 @@ export default function handler(
     return res.status(405).json({ success: false, message: 'Method not allowed' })
   }
 
-  const { password } = req.body
-
-  const adminPassword = process.env.ADMIN_PASSWORD
-
-  if (!adminPassword) {
-    return res.status(500).json({ success: false, message: 'Server configuration error' })
+  if (!(await rateLimit(req, 'admin-auth', 10, 900))) {
+    return res
+      .status(429)
+      .json({ success: false, message: 'Zu viele Versuche. Bitte warten Sie 15 Minuten.' })
   }
 
-  if (password === adminPassword) {
+  if (isAdminAuthorized(req.body?.password)) {
     return res.status(200).json({ success: true })
   }
 

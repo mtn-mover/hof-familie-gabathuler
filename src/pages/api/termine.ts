@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { kv } from '@vercel/kv'
+import { isAdminAuthorized, clip, withTimeout } from '@/lib/apiHelpers'
 
 export type Termin = {
   id: string
@@ -26,7 +27,7 @@ export default async function handler(
   try {
     if (req.method === 'GET') {
       // Get termine from KV store
-      let termine = await kv.get<Termin[]>('termine')
+      let termine = await withTimeout(kv.get<Termin[]>('termine'), 1500)
 
       if (!termine) {
         // Initialize with defaults if empty
@@ -38,17 +39,25 @@ export default async function handler(
     }
 
     if (req.method === 'POST') {
-      // Verify admin password
       const { password, termine } = req.body
 
-      if (password !== process.env.ADMIN_PASSWORD) {
+      if (!isAdminAuthorized(password)) {
         return res.status(401).json({ error: 'Nicht autorisiert' })
       }
 
-      // Save termine to KV store
-      await kv.set('termine', termine)
+      if (!Array.isArray(termine) || termine.length > 50) {
+        return res.status(400).json({ error: 'Ungültige Daten' })
+      }
 
-      return res.status(200).json({ termine })
+      const sanitized: Termin[] = termine.map((t) => ({
+        id: clip(t?.id, 40),
+        name: clip(t?.name, 100),
+        status: t?.status === 'ausverkauft' ? 'ausverkauft' : 'aktiv',
+      }))
+
+      await kv.set('termine', sanitized)
+
+      return res.status(200).json({ termine: sanitized })
     }
 
     return res.status(405).json({ error: 'Method not allowed' })

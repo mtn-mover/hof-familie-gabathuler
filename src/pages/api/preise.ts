@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { kv } from '@vercel/kv'
+import { isAdminAuthorized, withTimeout } from '@/lib/apiHelpers'
 
 export type Preise = {
   mischpaketProKg: number
@@ -25,7 +26,7 @@ type PreiseResponse = {
 }
 
 // Default preise based on the order form
-const defaultPreise: Preise = {
+export const defaultPreise: Preise = {
   mischpaketProKg: 29.0,
   einzelpreise: {
     siedfleisch: 21.0,
@@ -43,6 +44,31 @@ const defaultPreise: Preise = {
   },
 }
 
+function toPrice(value: unknown): number | null {
+  const num = typeof value === 'number' ? value : NaN
+  if (!Number.isFinite(num) || num < 0 || num > 10000) return null
+  return Math.round(num * 100) / 100
+}
+
+// Rebuilds the object from known keys so NaN/junk from the admin form never reaches KV
+function sanitizePreise(input: unknown): Preise | null {
+  if (!input || typeof input !== 'object') return null
+  const raw = input as Record<string, unknown>
+
+  const mischpaketProKg = toPrice(raw.mischpaketProKg)
+  if (mischpaketProKg === null) return null
+
+  const einzelRaw = (raw.einzelpreise ?? {}) as Record<string, unknown>
+  const einzelpreise = {} as Preise['einzelpreise']
+  for (const key of Object.keys(defaultPreise.einzelpreise) as (keyof Preise['einzelpreise'])[]) {
+    const price = toPrice(einzelRaw[key])
+    if (price === null) return null
+    einzelpreise[key] = price
+  }
+
+  return { mischpaketProKg, einzelpreise }
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<PreiseResponse>
@@ -50,7 +76,7 @@ export default async function handler(
   try {
     if (req.method === 'GET') {
       // Get preise from KV store
-      let preise = await kv.get<Preise>('preise')
+      let preise = await withTimeout(kv.get<Preise>('preise'), 1500)
 
       if (!preise) {
         // Initialize with defaults if empty
@@ -62,17 +88,20 @@ export default async function handler(
     }
 
     if (req.method === 'POST') {
-      // Verify admin password
       const { password, preise } = req.body
 
-      if (password !== process.env.ADMIN_PASSWORD) {
+      if (!isAdminAuthorized(password)) {
         return res.status(401).json({ error: 'Nicht autorisiert' })
       }
 
-      // Save preise to KV store
-      await kv.set('preise', preise)
+      const sanitized = sanitizePreise(preise)
+      if (!sanitized) {
+        return res.status(400).json({ error: 'Ungültige Preise' })
+      }
 
-      return res.status(200).json({ preise })
+      await kv.set('preise', sanitized)
+
+      return res.status(200).json({ preise: sanitized })
     }
 
     return res.status(405).json({ error: 'Method not allowed' })

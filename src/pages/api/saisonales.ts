@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { kv } from '@vercel/kv'
+import { isAdminAuthorized, clip, withTimeout } from '@/lib/apiHelpers'
 
 export type SaisonalesProdukt = {
   id: string
@@ -19,7 +20,7 @@ export default async function handler(
 ) {
   try {
     if (req.method === 'GET') {
-      let saisonales = await kv.get<SaisonalesProdukt[]>('saisonales')
+      let saisonales = await withTimeout(kv.get<SaisonalesProdukt[]>('saisonales'), 1500)
 
       if (!saisonales) {
         saisonales = []
@@ -32,13 +33,24 @@ export default async function handler(
     if (req.method === 'POST') {
       const { password, saisonales } = req.body
 
-      if (password !== process.env.ADMIN_PASSWORD) {
+      if (!isAdminAuthorized(password)) {
         return res.status(401).json({ error: 'Nicht autorisiert' })
       }
 
-      await kv.set('saisonales', saisonales)
+      if (!Array.isArray(saisonales) || saisonales.length > 50) {
+        return res.status(400).json({ error: 'Ungültige Daten' })
+      }
 
-      return res.status(200).json({ saisonales })
+      const sanitized: SaisonalesProdukt[] = saisonales.map((p) => ({
+        id: clip(p?.id, 40),
+        name: clip(p?.name, 100),
+        beschreibung: clip(p?.beschreibung, 300),
+        verfuegbar: p?.verfuegbar === true,
+      }))
+
+      await kv.set('saisonales', sanitized)
+
+      return res.status(200).json({ saisonales: sanitized })
     }
 
     return res.status(405).json({ error: 'Method not allowed' })

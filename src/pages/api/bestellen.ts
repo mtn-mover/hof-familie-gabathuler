@@ -1,9 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { Resend } from 'resend'
 import { kv } from '@vercel/kv'
-import type { Preise } from './preise'
+import { defaultPreise, type Preise } from './preise'
+import { clip, isValidEmail, rateLimit, withTimeout } from '@/lib/apiHelpers'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
+
+const bratenOptionen = ['Braten', 'Plätzli für Fleischvögel', 'Saftplätzli']
 
 const fleischstuecke = [
   { key: 'siedfleisch', label: 'Siedfleisch' },
@@ -130,28 +133,90 @@ export default async function handler(
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const bestellung: Bestellung = req.body
+  if (!(await rateLimit(req, 'bestellen', 5, 600))) {
+    return res
+      .status(429)
+      .json({ error: 'Zu viele Anfragen. Bitte versuchen Sie es in ein paar Minuten erneut.' })
+  }
 
-  // Validate required fields
+  const raw = req.body ?? {}
+
+  // Honeypot: bots fill every field; real users never see this one
+  if (clip(raw.firma, 100)) {
+    return res.status(200).json({ success: true, message: 'Bestellung erfolgreich gesendet' })
+  }
+
+  const fleischLabels = fleischstuecke.map((f) => f.label)
+  const portionsLabels = portionsgroessen.map((p) => p.label)
+
+  const rawEinzel = (Array.isArray(raw.einzelbestellungen) ? raw.einzelbestellungen : []) as Array<{
+    fleischstueck?: unknown
+    portionen?: unknown
+    portionsgroesse?: unknown
+  }>
+
+  const einzelbestellungen = rawEinzel
+    .slice(0, 30)
+    .map((item) => ({
+      fleischstueck:
+        typeof item?.fleischstueck === 'string' && fleischLabels.includes(item.fleischstueck)
+          ? item.fleischstueck
+          : '',
+      portionen:
+        typeof item?.portionen === 'number' && Number.isInteger(item.portionen) && item.portionen > 0
+          ? Math.min(item.portionen, 999)
+          : 0,
+      portionsgroesse:
+        typeof item?.portionsgroesse === 'string' && portionsLabels.includes(item.portionsgroesse)
+          ? item.portionsgroesse
+          : portionsgroessen[0].label,
+    }))
+    .filter((item) => item.fleischstueck && item.portionen > 0)
+
+  const bestellung: Bestellung = {
+    name: clip(raw.name, 120),
+    adresse: clip(raw.adresse, 200),
+    plzOrt: clip(raw.plzOrt, 100),
+    telefon: clip(raw.telefon, 50),
+    email: clip(raw.email, 254),
+    mitteilung: clip(raw.mitteilung, 2000),
+    liefertermin: clip(raw.liefertermin, 100),
+    mischpaketGroesse: ['10', '15', '20'].includes(raw.mischpaketGroesse)
+      ? raw.mischpaketGroesse
+      : '',
+    portionsgroesse: portionsLabels.includes(raw.portionsgroesse) ? raw.portionsgroesse : '',
+    mehrGehacktes: raw.mehrGehacktes === true,
+    bratenAufteilung: (Array.isArray(raw.bratenAufteilung) ? raw.bratenAufteilung : []).filter(
+      (option: unknown): option is string =>
+        typeof option === 'string' && bratenOptionen.includes(option)
+    ),
+    einzelbestellungen,
+  }
+
   if (!bestellung.name || !bestellung.email || !bestellung.liefertermin) {
     return res.status(400).json({ error: 'Bitte füllen Sie alle Pflichtfelder aus' })
+  }
+
+  if (!isValidEmail(bestellung.email)) {
+    return res.status(400).json({ error: 'Bitte geben Sie eine gültige E-Mail-Adresse an' })
+  }
+
+  if (!bestellung.mischpaketGroesse && einzelbestellungen.length === 0) {
+    return res
+      .status(400)
+      .json({ error: 'Bitte wählen Sie ein Mischpaket oder mindestens ein Fleischstück aus' })
   }
 
   try {
     const bestellungText = formatBestellung(bestellung)
 
-    // Fetch prices for confirmation email
-    let preise = await kv.get<Preise>('preise')
-    if (!preise) {
-      preise = {
-        mischpaketProKg: 29.0,
-        einzelpreise: {
-          siedfleisch: 21.0, gehacktes: 21.0, geschnetzeltes: 35.0,
-          voressen: 25.0, braten: 32.0, fleischvogelPlaetzli: 32.0,
-          saftplaetzli: 34.0, plaetzli: 45.0, steak: 57.0,
-          huft: 65.0, filet: 75.0, leber: 21.0,
-        },
-      }
+    // Fetch prices for confirmation email; a KV outage must not block the order
+    let preise: Preise = defaultPreise
+    try {
+      const stored = await withTimeout(kv.get<Preise>('preise'), 1500)
+      if (stored) preise = stored
+    } catch (error) {
+      console.error('Preise fetch failed, using defaults:', error)
     }
 
     // Calculate prices
@@ -165,7 +230,7 @@ export default async function handler(
         if (item.portionen > 0) {
           const fleischItem = fleischstuecke.find((f) => f.label === item.fleischstueck)
           if (fleischItem) {
-            const pricePerKg = preise!.einzelpreise[fleischItem.key as keyof typeof preise.einzelpreise] || 0
+            const pricePerKg = preise.einzelpreise[fleischItem.key as keyof typeof preise.einzelpreise] || 0
             const selectedSize = portionsgroessen.find((p) => p.label === item.portionsgroesse)
             const grammPerPortion = selectedSize?.gramm || 250
             const totalKg = (item.portionen * grammPerPortion) / 1000
@@ -194,16 +259,24 @@ PREISÜBERSICHT:
   TOTAL: CHF ${gesamt.toFixed(2)}
 `
 
-    // Send email to Gabathuler
-    await resend.emails.send({
+    // Send email to Gabathuler — resend v6 reports API errors via `error`, it does not throw
+    const { error: farmEmailError } = await resend.emails.send({
       from: 'Hof Gabathuler <noreply@hof-gabathuler.ch>',
       to: 'info@hof-gabathuler.ch',
+      replyTo: bestellung.email,
       subject: `Neue Bestellung von ${bestellung.name}`,
       text: bestellungText + preisSummary,
     })
 
-    // Send confirmation to customer
-    await resend.emails.send({
+    if (farmEmailError) {
+      console.error('Bestellung email error:', farmEmailError)
+      return res.status(500).json({
+        error: 'Fehler beim Senden der Bestellung. Bitte versuchen Sie es später erneut.',
+      })
+    }
+
+    // Send confirmation to customer; a failure here must not fail the order (farm email is out)
+    const confirmResult = await resend.emails.send({
       from: 'Hof Gabathuler <noreply@hof-gabathuler.ch>',
       to: bestellung.email,
       subject: 'Ihre Bestellung bei Hof Familie Gabathuler',
@@ -226,7 +299,14 @@ Ihre Bestellung:
 ${bestellungText}
 ${preisSummary}
 `,
+    }).catch((error: unknown) => {
+      console.error('Bestellung confirmation email error:', error)
+      return null
     })
+
+    if (confirmResult?.error) {
+      console.error('Bestellung confirmation email error:', confirmResult.error)
+    }
 
     return res.status(200).json({
       success: true,
