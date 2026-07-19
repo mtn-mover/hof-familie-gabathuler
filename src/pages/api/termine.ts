@@ -13,11 +13,9 @@ type TermineResponse = {
   error?: string
 }
 
-// Default termine if none exist
+// Default termine if none exist — real dates are maintained via /admin
 const defaultTermine: Termin[] = [
-  { id: '1', name: 'November 2024', status: 'aktiv' },
-  { id: '2', name: 'Dezember 2024', status: 'aktiv' },
-  { id: '3', name: 'April/Mai 2025', status: 'aktiv' },
+  { id: '1', name: 'Nach Absprache', status: 'aktiv' },
 ]
 
 export default async function handler(
