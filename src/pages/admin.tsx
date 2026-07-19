@@ -139,12 +139,14 @@ export default function AdminPage() {
 
   const updatePreis = (key: string, value: number) => {
     if (!preise) return
+    // A cleared input yields NaN — never store that as a price
+    const safeValue = Number.isFinite(value) ? value : 0
     if (key === 'mischpaketProKg') {
-      setPreise({ ...preise, mischpaketProKg: value })
+      setPreise({ ...preise, mischpaketProKg: safeValue })
     } else {
       setPreise({
         ...preise,
-        einzelpreise: { ...preise.einzelpreise, [key]: value },
+        einzelpreise: { ...preise.einzelpreise, [key]: safeValue },
       })
     }
   }

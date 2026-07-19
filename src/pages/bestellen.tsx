@@ -52,6 +52,8 @@ export default function BestellenPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
+  // Honeypot field for spam bots — stays empty for real users
+  const [firma, setFirma] = useState('')
 
   // Einzelbestellungen state - dynamic list
   const [einzelItems, setEinzelItems] = useState<EinzelItem[]>([])
@@ -134,6 +136,14 @@ export default function BestellenPage() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
+
+    const hasEinzelbestellung = einzelItems.some((item) => item.fleischstueck && item.portionen > 0)
+    if (!formData.mischpaketGroesse && !hasEinzelbestellung) {
+      setSubmitStatus('error')
+      setErrorMessage('Bitte wählen Sie ein Mischpaket oder mindestens ein Fleischstück aus.')
+      return
+    }
+
     setIsSubmitting(true)
     setErrorMessage('')
 
@@ -141,7 +151,7 @@ export default function BestellenPage() {
       const res = await fetch('/api/bestellen', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, firma }),
       })
 
       const data = await res.json()
@@ -164,6 +174,7 @@ export default function BestellenPage() {
           einzelbestellungen: [],
         })
         setEinzelItems([])
+        setFirma('')
       } else {
         setSubmitStatus('error')
         setErrorMessage(data.error || 'Ein Fehler ist aufgetreten')
@@ -196,7 +207,7 @@ export default function BestellenPage() {
   const addEinzelItem = () => {
     setEinzelItems([
       ...einzelItems,
-      { fleischstueck: '', portionen: 1, portionsgroesse: 'mittel (ca. 250g)' },
+      { fleischstueck: '', portionen: 1, portionsgroesse: portionsgroessen[0].label },
     ])
   }
 
@@ -770,6 +781,19 @@ export default function BestellenPage() {
                     value={formData.telefon}
                     onChange={(e) => updateField('telefon', e.target.value)}
                     className="w-full px-4 py-3 rounded-xl border border-primary-200 focus:outline-none focus:ring-2 focus:ring-secondary-500"
+                  />
+                </div>
+                {/* Honeypot — hidden from real users, bots fill it */}
+                <div className="hidden" aria-hidden="true">
+                  <label htmlFor="firma">Firma</label>
+                  <input
+                    type="text"
+                    id="firma"
+                    name="firma"
+                    value={firma}
+                    onChange={(e) => setFirma(e.target.value)}
+                    tabIndex={-1}
+                    autoComplete="off"
                   />
                 </div>
                 <div className="md:col-span-2">

@@ -545,8 +545,8 @@ export default function AboutPage() {
                 <Link href="/contact" className="btn-primary bg-secondary-500 hover:bg-secondary-600">
                   Kontakt aufnehmen
                 </Link>
-                <Link href="/products" className="btn-secondary border-white/30 text-white hover:bg-white hover:text-primary-800">
-                  Unsere Produkte
+                <Link href="/bestellen" className="btn-secondary border-white/30 text-white hover:bg-white hover:text-primary-800">
+                  Fleisch bestellen
                 </Link>
               </div>
             </div>

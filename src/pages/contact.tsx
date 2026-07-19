@@ -15,6 +15,8 @@ export default function ContactPage() {
     email: '',
     phone: '',
     message: '',
+    // Honeypot field for spam bots — stays empty for real users
+    firma: '',
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
@@ -32,7 +34,7 @@ export default function ContactPage() {
 
       if (res.ok) {
         setSubmitStatus('success')
-        setFormData({ name: '', email: '', phone: '', message: '' })
+        setFormData({ name: '', email: '', phone: '', message: '', firma: '' })
       } else {
         setSubmitStatus('error')
       }
@@ -157,6 +159,20 @@ export default function ContactPage() {
                     onChange={handleChange}
                     className="w-full px-4 py-3 rounded-xl border border-primary-200 bg-white text-primary-800 placeholder-primary-400 focus:outline-none focus:ring-2 focus:ring-secondary-500 focus:border-transparent transition-all duration-200"
                     placeholder="079 123 45 67"
+                  />
+                </div>
+
+                {/* Honeypot — hidden from real users, bots fill it */}
+                <div className="hidden" aria-hidden="true">
+                  <label htmlFor="firma">Firma</label>
+                  <input
+                    type="text"
+                    id="firma"
+                    name="firma"
+                    value={formData.firma}
+                    onChange={handleChange}
+                    tabIndex={-1}
+                    autoComplete="off"
                   />
                 </div>
 

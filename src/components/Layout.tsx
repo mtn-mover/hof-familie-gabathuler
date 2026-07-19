@@ -1,5 +1,6 @@
 import { ReactNode } from 'react'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
 import Header from './Header'
 import Footer from './Footer'
 
@@ -18,6 +19,10 @@ export default function Layout({
     ? title
     : `${title} | Hof Familie Gabathuler`
 
+  const { asPath } = useRouter()
+  const path = asPath.split(/[?#]/)[0]
+  const canonicalUrl = `https://hof-gabathuler.ch${path === '/' ? '' : path}`
+
   return (
     <>
       <Head>
@@ -34,6 +39,7 @@ export default function Layout({
         <meta property="og:type" content="website" />
         <meta property="og:locale" content="de_CH" />
         <meta property="og:site_name" content="Hof Familie Gabathuler" />
+        <meta property="og:url" content={canonicalUrl} />
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
@@ -47,7 +53,7 @@ export default function Layout({
         <meta name="geo.placename" content="Fläsch" />
 
         {/* Canonical */}
-        <link rel="canonical" href="https://hof-familie-gabathuler.vercel.app" />
+        <link rel="canonical" href={canonicalUrl} />
       </Head>
 
       <div className="flex flex-col min-h-screen">
