@@ -5,6 +5,22 @@ import { withTimeout } from '@/lib/apiHelpers'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
+// incr proves connectivity and write access in a single atomic request —
+// unlike the previous set-then-get probe there is no read-after-write race
+// with replicated stores, which caused false alarms while the DB was healthy
+async function probeKv(): Promise<{ ok: boolean; detail: string }> {
+  try {
+    const count = await withTimeout(kv.incr('health:probe-counter'), 4000)
+    if (typeof count === 'number' && count > 0) {
+      await withTimeout(kv.expire('health:probe-counter', 172800), 4000).catch(() => {})
+      return { ok: true, detail: '' }
+    }
+    return { ok: false, detail: `Unerwartete Antwort: ${String(count)}` }
+  } catch (error) {
+    return { ok: false, detail: error instanceof Error ? error.message : String(error) }
+  }
+}
+
 // Called daily by Vercel Cron (vercel.json). Alerts by email when the KV
 // store is unreachable, so a dead database can no longer go unnoticed.
 export default async function handler(
@@ -16,17 +32,14 @@ export default async function handler(
     return res.status(401).json({ error: 'Nicht autorisiert' })
   }
 
-  let kvOk = false
-  let detail = ''
-  try {
-    const probeKey = `health:${Date.now()}`
-    await withTimeout(kv.set(probeKey, 'ok', { ex: 60 }), 3000)
-    const value = await withTimeout(kv.get(probeKey), 3000)
-    kvOk = value === 'ok'
-    if (!kvOk) detail = 'Probe-Wert nicht zurücklesbar'
-  } catch (error) {
-    detail = error instanceof Error ? error.message : String(error)
+  let probe = await probeKv()
+  if (!probe.ok) {
+    // One in-run retry so a transient hiccup does not send an alert
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+    probe = await probeKv()
   }
+  const kvOk = probe.ok
+  const detail = probe.detail
 
   if (!kvOk) {
     try {
